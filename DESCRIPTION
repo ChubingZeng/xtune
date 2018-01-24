@@ -1,0 +1,13 @@
+Package: classo
+Type: Package
+Title: An Implementation of EB tuning of LASSO 
+Version: 0.1.0
+Author: Chubing Zeng
+Maintainer: Chubing Zeng <chubingz@usc.edu>
+Description: This is a test R package for classo
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports: 
+   glmnet 
+RoxygenNote: 6.0.1
