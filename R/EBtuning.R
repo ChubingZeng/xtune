@@ -1,3 +1,4 @@
+##dafas
 ### This file contains functions needed for our method when there is no external info
 ### provides an alternative to cross-validation
 estimateVar_SI<-function(input_X,input_Y){
@@ -18,33 +19,33 @@ EB_opt<-function(input_X,input_Y,maxstep,initial){
         sigma2=initial[2]
         n=nrow(input_X)
         p=ncol(input_X)
-        
+
         gamma_sample=matrix(NA,ncol = 1,nrow = maxstep)
         sigma2_sample=matrix(NA,ncol = 1,nrow = maxstep)
         k=1
         while(k<maxstep){
-                
+
                 big_sigma=ginv((1/sigma2)*t(X)%*%X+diag(rep(gamma,p)))
                 big_mu=(1/sigma2)*big_sigma%*%t(X)%*%Y
-                
+
                 if (k>3){
                         distance=sum(gamma_sample[k-1]-gamma_sample[k-2])
                         if (distance<0.01){
                                 break
                         }
                 }
-                
+
                 eta=p-gamma*sum(diag(big_sigma))
                 gamma=eta/(t(big_mu)%*%big_mu)
                 yminus=Y-X%*%big_mu
                 sigma2=as.numeric(t(yminus)%*%yminus/(n-eta))
-                
+
                 gamma_sample[k]=gamma
                 sigma2_sample[k]=sigma2
                 k=k+1
         }
         return(list(tau_est=sqrt(2*gamma),sigma2_est=sigma2))
-        
+
 }
 
 EBestiamtes<-function(input_X,input_Y){
