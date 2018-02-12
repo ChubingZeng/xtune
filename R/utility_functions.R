@@ -1,33 +1,33 @@
 ##------------------- Esitmating error variance ------------------##
 checkargs.xy <- function(x, y) {
-    if (missing(x)) 
+    if (missing(x))
         stop("x is missing")
-    if (is.null(x) || !is.matrix(x)) 
+    if (is.null(x) || !is.matrix(x))
         stop("x must be a matrix")
-    if (missing(y)) 
+    if (missing(y))
         stop("y is missing")
-    if (is.null(y) || !is.numeric(y)) 
+    if (is.null(y) || !is.numeric(y))
         stop("y must be numeric")
-    if (ncol(x) == 0) 
+    if (ncol(x) == 0)
         stop("There must be at least one predictor [must have ncol(x) > 0]")
-    if (checkcols(x)) 
+    if (checkcols(x))
         stop("x cannot have duplicate columns")
-    if (length(y) == 0) 
+    if (length(y) == 0)
         stop("There must be at least one data point [must have length(y) > 0]")
-    if (length(y) != nrow(x)) 
+    if (length(y) != nrow(x))
         stop("Dimensions don't match [length(y) != nrow(x)]")
 }
 checkcols <- function(A) {
     b = rnorm(nrow(A))
     a = sort(t(A) %*% b)
-    if (any(diff(a) == 0)) 
+    if (any(diff(a) == 0))
         return(TRUE)
     return(FALSE)
 }
 
 estimateSigma <- function(x, y, intercept = TRUE, standardize = TRUE) {
     checkargs.xy(x, rep(0, nrow(x)))
-    if (nrow(x) < 10) 
+    if (nrow(x) < 10)
         stop("Number of observations must be at least 10 to run estimateSigma")
     cvfit = cv.glmnet(x, y, intercept = intercept, standardize = standardize)
     lamhat = cvfit$lambda.min
@@ -38,7 +38,7 @@ estimateSigma <- function(x, y, intercept = TRUE, standardize = TRUE) {
     return(list(sigmahat = sigma, df = nz))
 }
 
-estimatevar_si <- function(input_X, input_Y) {
+estimateVar_SI <- function(input_X, input_Y) {
     sd = array(NA, 10)
     for (m in 1:10) {
         temp = estimateSigma(input_X, input_Y)$sigmahat
