@@ -1,13 +1,20 @@
 Package: classo
 Type: Package
-Title: An Implementation of EB tuning of LASSO 
+Title: An implementation of Empirical Bayes tuning and Customized Lasso with External Information
 Version: 0.1.0
 Author: Chubing Zeng
 Maintainer: Chubing Zeng <chubingz@usc.edu>
-Description: This is a test R package for classo
-License: What license is it under?
+Description: R package for Empirical Bayes tuning and Customized Lasso with External Information. 
+                Empirical Bayes tuning provides an way to estimating tuning parameter in Lasso as 
+                an alternative to cross validation. Customized Lasso generalizes standard Lasso by 
+                allowing differential shrinkage for parameters, with the goal of improving prediction. 
+               
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
-   glmnet 
+   glmnet, 
+   lbfgs
+Depends:
+   R (>= 2.10)
 RoxygenNote: 6.0.1
