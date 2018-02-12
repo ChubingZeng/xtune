@@ -1,4 +1,3 @@
-##dafas
 ### This file contains functions needed for our method when there is no external info
 ### provides an alternative to cross-validation
 estimateVar_SI<-function(input_X,input_Y){
