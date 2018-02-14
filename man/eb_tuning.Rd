@@ -19,8 +19,24 @@ eb_tuning(input_X, input_Y, initial_val = 0.1, maxstep = 100,
 \item{max_step}{max step for iterations. Default value is 100.}
 }
 \value{
-Returns the estimated tuning parameter
+Returns the estimated tuning parameter and estimated coefficients
 }
 \description{
 \code{eb_tuning} returns the tuning parameter estimated by empirical bayes method.
+}
+\examples{
+set.seed(999)
+n = 100
+p = 200
+x <- matrix(rnorm(2*n*p,0,1),nrow=2*n,ncol=p)
+y <- x\%*\%c(rlaplace(p,0,1)) + rnorm(2*n,0,1)
+x_train = x[1:n,]
+y_train = y[1:n]
+x_test = x[(n+1):(2*n),]
+y_test = y[(n+1):(2*n)]
+eb.fit = eb_tuning(x_train,y_train)
+print(cv.glmnet(x,y)$lambda.min)
+print(eb.fit$tuningPar)
+mean((cbind(rep(1,n),x_test)\%*\%(eb.fit$coef) - y_test)^2)
+mean((cbind(rep(1,n),x_test)\%*\%coef(glmnet(x_train,y_train,alpha = 1,lambda=cv.glmnet(x_train,y_train)$lambda.min)) - y_test)^2)
 }
