@@ -34,12 +34,22 @@
 
 
 ###------------------------------ Customized LASSO ------------------------------###
-customized_lasso <- function(initial_value = rep(0,ncol(input_Z)), input_X, input_Y, input_Z, inSigmaSquare = estimateVar_SI(input_X,input_Y)){
+customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,ncol(input_Z)),inSigmaSquare = estimateVar_SI(input_X,input_Y)){
         alphaEst = tryCatch(lbfgs(approx_likelihood, score_function, input_X = input_X, input_Y = input_Y, input_Z = input_Z,
                                   sigma2_est = inSigmaSquare, initial_value, invisible = 1)$par, error = function(c) {
                                           optim(initial_value, fn = approx_likelihood, input_X = input_X, input_Y = input_Y, input_Z = input_Z, sigma2_est = inSigmaSquare)$par
                                   })
         tauEst = exp(input_Z%*%alphaEst)
         coef = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst))
-        return(list(cus.lambda = inSigmaSquare, cus.penalty = tauEst, coef = coef))
+        varEst = inSigmaSquare
+        if(sum(coef[-1] == 0) > length(coef[-1]) - 5){
+                use_eb = eb_tuning(input_X, input_Y)
+                coef = use_eb$coef
+                tauEst = use_eb$tau_est
+                varEst = use_eb$var_est
+                alphaEst = c(log(tauEst),rep(0,ncol(input_Z)-1))
+        }
+        return(list(tau_est = tauEst, var_est = varEst, alpha_est = alphaEst ,coef = coef))
 }
+
+

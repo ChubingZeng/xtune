@@ -11,7 +11,7 @@ Description: R package for Empirical Bayes tuning and Customized Lasso with Exte
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: 
+Imports:
    glmnet,
    lbfgs,
    MASS,
@@ -19,3 +19,6 @@ Imports:
 Depends:
    R (>= 2.10)
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
