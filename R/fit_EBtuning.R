@@ -70,7 +70,6 @@ eb_tuning <- function(input_X, input_Y, initial_val = 0.1, maxstep = 100, margin
         tuningParameter = cv.glmnet(X, Y)$lambda.min
         estimated_tau = tuningParameter*nrow(input_X)/estimated_variance
     })
-    options(warn = 0)
     coef = coef(glmnet(X,Y,alpha = 1,lambda = tuningParameter))
     return(list(tuningPar = tuningParameter, coef = coef, var_est = estimated_variance, tau_est = estimated_tau ))
 }

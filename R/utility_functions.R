@@ -40,6 +40,7 @@ estimateSigma <- function(x, y, intercept = TRUE, standardize = TRUE) {
 
 estimateVar_SI <- function(input_X, input_Y) {
     sd = array(NA, 10)
+    options(warn = -1)
     for (m in 1:10) {
         temp = estimateSigma(input_X, input_Y)$sigmahat
         sd[m] = ifelse(temp %in% c(Inf, NaN), NA, temp)

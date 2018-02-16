@@ -31,25 +31,25 @@
 #' ada_lasso = adalasso(x_train,y_train)
 #' mean((cbind(rep(1,n),x_test)%*%c(ada_lasso$intercept.adalasso,ada_lasso$coefficients.adalasso)- y_test)^2)
 
-
-
 ###------------------------------ Customized LASSO ------------------------------###
 customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,ncol(input_Z)),inSigmaSquare = estimateVar_SI(input_X,input_Y)){
-        alphaEst = tryCatch(lbfgs(approx_likelihood, score_function, input_X = input_X, input_Y = input_Y, input_Z = input_Z,
+        alphaEst1 = tryCatch(lbfgs(approx_likelihood, score_function, input_X = input_X, input_Y = input_Y, input_Z = input_Z,
                                   sigma2_est = inSigmaSquare, initial_value, invisible = 1)$par, error = function(c) {
                                           optim(initial_value, fn = approx_likelihood, input_X = input_X, input_Y = input_Y, input_Z = input_Z, sigma2_est = inSigmaSquare)$par
                                   })
-        tauEst = exp(input_Z%*%alphaEst)
-        coef = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst))
-        varEst = inSigmaSquare
-        if(sum(coef[-1] == 0) > length(coef[-1]) - 5){
+        tauEst1 = exp(input_Z%*%alphaEst1)
+        coef1 = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst1))
+        varEst1 = inSigmaSquare
+        if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
                 use_eb = eb_tuning(input_X, input_Y)
-                coef = use_eb$coef
-                tauEst = use_eb$tau_est
-                varEst = use_eb$var_est
-                alphaEst = c(log(tauEst),rep(0,ncol(input_Z)-1))
+                coef2 = use_eb$coef
+                tauEst2 = use_eb$tau_est
+                varEst2 = use_eb$var_est
+                alphaEst2 = c(log(tauEst),rep(0,ncol(input_Z)-1))
+                return(list(tau_est = tauEst2, var_est = varEst2, alpha_est = alphaEst2 ,coefficients = coef2))
         }
-        return(list(tau_est = tauEst, var_est = varEst, alpha_est = alphaEst ,coef = coef))
+        else{
+                return(list(tau_est = tauEst1, var_est = varEst1, alpha_est = alphaEst1 ,coefficients = coef1))
+        }
 }
-
 
