@@ -32,24 +32,60 @@
 #' mean((cbind(rep(1,n),x_test)%*%c(ada_lasso$intercept.adalasso,ada_lasso$coefficients.adalasso)- y_test)^2)
 
 ###------------------------------ Customized LASSO ------------------------------###
-customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,ncol(input_Z)),inSigmaSquare = estimateVar_SI(input_X,input_Y)){
-        alphaEst1 = tryCatch(lbfgs(approx_likelihood, score_function, input_X = input_X, input_Y = input_Y, input_Z = input_Z,
-                                  sigma2_est = inSigmaSquare, initial_value, invisible = 1)$par, error = function(c) {
-                                          optim(initial_value, fn = approx_likelihood, input_X = input_X, input_Y = input_Y, input_Z = input_Z, sigma2_est = inSigmaSquare)$par
-                                  })
-        tauEst1 = exp(input_Z%*%alphaEst1)
-        coef1 = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst1))
-        varEst1 = inSigmaSquare
-        if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
-                use_eb = eb_tuning(input_X, input_Y)
-                coef2 = use_eb$coef
-                tauEst2 = use_eb$tau_est
-                varEst2 = use_eb$var_est
-                alphaEst2 = c(log(tauEst),rep(0,ncol(input_Z)-1))
-                return(list(tau_est = tauEst2, var_est = varEst2, alpha_est = alphaEst2 ,coefficients = coef2))
+customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,ncol(input_Z)),inSigmaSquare = estimateVar_SI(input_X,input_Y), method = "L-BFGS-B"){
+        if(method == "L-BFGS-B"){
+                alphaEst1 = lbfgs(approx_likelihood, score_function, input_X = input_X, input_Y = input_Y, input_Z = input_Z,
+                                  sigma2_est = inSigmaSquare, initial_value, invisible = 1)$par
+                tauEst1 = exp(input_Z%*%alphaEst1)
+                coef1 = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst1))
+                varEst1 = inSigmaSquare
+                if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
+                        use_eb = eb_tuning(input_X, input_Y)
+                        coef2 = use_eb$coef
+                        tauEst2 = use_eb$tau_est
+                        varEst2 = use_eb$var_est
+                        alphaEst2 = c(log(tauEst2),rep(0,ncol(input_Z)-1))
+                        return(list(tau_est = tauEst2, var_est = varEst2, alpha_est = alphaEst2 ,coefficients = coef2))
+                }
+                else{
+                        return(list(tau_est = tauEst1, var_est = varEst1, alpha_est = alphaEst1 ,coefficients = coef1))
+                }
         }
-        else{
-                return(list(tau_est = tauEst1, var_est = varEst1, alpha_est = alphaEst1 ,coefficients = coef1))
+        if(method == "Nelder-Mead"){
+                alphaEst1 = optim(initial_value, fn = approx_likelihood, input_X = input_X, input_Y = input_Y, input_Z = input_Z, sigma2_est = inSigmaSquare)$par
+                tauEst1 = exp(input_Z%*%alphaEst1)
+                coef1 = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst1))
+                varEst1 = inSigmaSquare
+                if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
+                        use_eb = eb_tuning(input_X, input_Y)
+                        coef2 = use_eb$coef
+                        tauEst2 = use_eb$tau_est
+                        varEst2 = use_eb$var_est
+                        alphaEst2 = c(log(tauEst2),rep(0,ncol(input_Z)-1))
+                        return(list(tau_est = tauEst2, var_est = varEst2, alpha_est = alphaEst2 ,coefficients = coef2))
+                }
+                else{
+                        return(list(tau_est = tauEst1, var_est = varEst1, alpha_est = alphaEst1 ,coefficients = coef1))
+                }
         }
+        if(method == "sgd"){
+                alphaEst1 = sgd_momentum(input_X,input_Y,input_Z,sigma_square = inSigmaSquare)
+                tauEst1 = exp(input_Z%*%alphaEst1)
+                coef1 = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst1))
+                varEst1 = inSigmaSquare
+                if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
+                        use_eb = eb_tuning(input_X, input_Y)
+                        coef2 = use_eb$coef
+                        tauEst2 = use_eb$tau_est
+                        varEst2 = use_eb$var_est
+                        alphaEst2 = c(log(tauEst2),rep(0,ncol(input_Z)-1))
+                        return(list(tau_est = tauEst2, var_est = varEst2, alpha_est = alphaEst2 ,coefficients = coef2))
+                }
+                else{
+                        return(list(tau_est = tauEst1, var_est = varEst1, alpha_est = alphaEst1 ,coefficients = coef1))
+                }
+        }
+
+
 }
 

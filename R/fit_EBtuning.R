@@ -25,12 +25,10 @@
 
 
 eb_tuning <- function(input_X, input_Y, initial_val = 0.1, maxstep = 100, margin = 0.01) {
-    tuningParameter = tryCatch({
+    var_SI = estimateVar_SI(input_X, input_Y)
+    tryCatch({
         # estimate sigma square from SI
-        var_SI = estimateVar_SI(input_X, input_Y)
         # estiamtes from EB
-        X = input_X
-        Y = input_Y
         gamma = initial_val
         sigma2 = var_SI
         n = nrow(input_X)
@@ -41,8 +39,8 @@ eb_tuning <- function(input_X, input_Y, initial_val = 0.1, maxstep = 100, margin
         k = 1
         while (k < maxstep) {
 
-            big_sigma = ginv((1/sigma2) * t(X) %*% X + diag(rep(gamma, p)))
-            big_mu = (1/sigma2) * big_sigma %*% t(X) %*% Y
+            big_sigma = ginv((1/sigma2) * t(input_X) %*% input_X + diag(rep(gamma, p)))
+            big_mu = (1/sigma2) * big_sigma %*% t(input_X) %*% input_Y
 
             if (k > 3) {
                 distance = sum(gamma_sample[k - 1] - gamma_sample[k - 2])
@@ -53,7 +51,7 @@ eb_tuning <- function(input_X, input_Y, initial_val = 0.1, maxstep = 100, margin
 
             eta = p - gamma * sum(diag(big_sigma))
             gamma = eta/(t(big_mu) %*% big_mu)
-            yminus = Y - X %*% big_mu
+            yminus = input_Y - input_X %*% big_mu
             sigma2 = as.numeric(t(yminus) %*% yminus/(n - eta))
 
             gamma_sample[k] = gamma
@@ -67,9 +65,10 @@ eb_tuning <- function(input_X, input_Y, initial_val = 0.1, maxstep = 100, margin
         tuningParameter = estimated_tau * estimated_variance/(nrow(input_X))
 
     }, error = function(c) {
-        tuningParameter = cv.glmnet(X, Y)$lambda.min
+        tuningParameter = cv.glmnet(input_X, input_Y)$lambda.min
+        estimated_variance = var_SI
         estimated_tau = tuningParameter*nrow(input_X)/estimated_variance
     })
-    coef = coef(glmnet(X,Y,alpha = 1,lambda = tuningParameter))
+    coef = coef(glmnet(input_X,input_Y,alpha = 1,lambda = tuningParameter))
     return(list(tuningPar = tuningParameter, coef = coef, var_est = estimated_variance, tau_est = estimated_tau ))
 }
