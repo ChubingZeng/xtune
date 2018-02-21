@@ -96,3 +96,21 @@ score_function <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est) {
         dev_gamma = (gamma - diag(big_sigma) - big_mu^2)/(gamma^2)
         return(-t(dev_gamma) %*% (as.vector(gamma) * Z))
 }
+
+sgd_momentum <- function(input_X,input_Y,input_Z,initial_val = rep(0,ncol(input_Z)),
+                         momentum = 0.9,step_size = 0.1,margin = 10e-4,
+                         max_iterations = 1000, sigma_square = estimateVar_SI(input_X,input_Y)){
+        alpha = initial_val
+        iter = 0
+        velocity = 0
+        while (iter < max_iters) {
+                gradient = score_function(alpha,X,Y,Z,sigma_square)/nrow(X)
+                velocity = momentum*velocity - eta * gradient
+                alpha = as.vector(alpha + velocity)
+                if(sqrt(sum(gradient^2)) <= epsilon){
+                        break
+                }
+                iter = iter + 1
+        }
+        return(alpha)
+}

@@ -5,7 +5,8 @@
 \title{Empirical Bayes estimation of Lasso tuning parameter.}
 \usage{
 customized_lasso(input_X, input_Y, input_Z, initial_value = rep(0,
-  ncol(input_Z)), inSigmaSquare = estimateVar_SI(input_X, input_Y))
+  ncol(input_Z)), inSigmaSquare = estimateVar_SI(input_X, input_Y),
+  method = "L-BFGS-B")
 }
 \arguments{
 \item{input_X}{predictor matrix of dimension \eqn{n*q}.}
