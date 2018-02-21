@@ -42,9 +42,9 @@ customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,nco
                 if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
                         use_eb = eb_tuning(input_X, input_Y)
                         coef2 = use_eb$coef
-                        tauEst2 = use_eb$tau_est
+                        tauEst2 = rep(use_eb$tau_est,ncol(input_X))
                         varEst2 = use_eb$var_est
-                        alphaEst2 = c(log(tauEst2),rep(0,ncol(input_Z)-1))
+                        alphaEst2 = c(log(tauEst2),rep(0,ncol(input_Z)))
                         return(list(tau_est = tauEst2, var_est = varEst2, alpha_est = alphaEst2 ,coefficients = coef2))
                 }
                 else{
@@ -59,7 +59,7 @@ customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,nco
                 if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
                         use_eb = eb_tuning(input_X, input_Y)
                         coef2 = use_eb$coef
-                        tauEst2 = use_eb$tau_est
+                        tauEst2 = rep(use_eb$tau_est,ncol(input_X))
                         varEst2 = use_eb$var_est
                         alphaEst2 = c(log(tauEst2),rep(0,ncol(input_Z)-1))
                         return(list(tau_est = tauEst2, var_est = varEst2, alpha_est = alphaEst2 ,coefficients = coef2))
@@ -76,7 +76,7 @@ customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,nco
                 if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
                         use_eb = eb_tuning(input_X, input_Y)
                         coef2 = use_eb$coef
-                        tauEst2 = use_eb$tau_est
+                        tauEst2 = rep(use_eb$tau_est,ncol(input_X))
                         varEst2 = use_eb$var_est
                         alphaEst2 = c(log(tauEst2),rep(0,ncol(input_Z)-1))
                         return(list(tau_est = tauEst2, var_est = varEst2, alpha_est = alphaEst2 ,coefficients = coef2))
