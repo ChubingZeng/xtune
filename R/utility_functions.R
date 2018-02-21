@@ -105,9 +105,9 @@ sgd_momentum <- function(input_X,input_Y,input_Z,initial_val = rep(0,ncol(input_
         velocity = 0
         while (iter < max_iters) {
                 gradient = score_function(alpha,input_X,input_Y,input_Z,sigma_square)/nrow(input_X)
-                velocity = momentum*velocity - eta * gradient
+                velocity = momentum*velocity - step_size * gradient
                 alpha = as.vector(alpha + velocity)
-                if(sqrt(sum(gradient^2)) <= epsilon){
+                if(sqrt(sum(gradient^2)) <= margin){
                         break
                 }
                 iter = iter + 1
