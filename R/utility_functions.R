@@ -51,7 +51,7 @@ estimateVar_SI <- function(input_X, input_Y) {
 
 ##-------------------- MSE, MSE, MSE! --------------------------##
 get_mse <- function(estimation, true) {
-    return(mean((estimation - true)^2))
+    return(mean((as.vector(estimation) - as.vector(true))^2))
 }
 
 consistent <- function(true, estimate, tolerrance) {

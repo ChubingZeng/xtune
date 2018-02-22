@@ -25,50 +25,52 @@
 
 
 eb_tuning <- function(input_X, input_Y, initial_val = 0.1, maxstep = 100, margin = 0.01) {
-    var_SI = estimateVar_SI(input_X, input_Y)
-    tryCatch({
-        # estimate sigma square from SI
-        # estiamtes from EB
-        gamma = initial_val
-        sigma2 = var_SI
-        n = nrow(input_X)
-        p = ncol(input_X)
+        var_SI = estimateVar_SI(input_X, input_Y)
+        tryCatch({
+                # estimate sigma square from SI
+                # estiamtes from EB
+                gamma = initial_val
+                sigma2 = var_SI
+                n = nrow(input_X)
+                p = ncol(input_X)
 
-        gamma_sample = matrix(NA, ncol = 1, nrow = maxstep)
-        sigma2_sample = matrix(NA, ncol = 1, nrow = maxstep)
-        k = 1
-        while (k < maxstep) {
+                gamma_sample = matrix(NA, ncol = 1, nrow = maxstep)
+                sigma2_sample = matrix(NA, ncol = 1, nrow = maxstep)
+                k = 1
+                while (k < maxstep) {
 
-            big_sigma = ginv((1/sigma2) * t(input_X) %*% input_X + diag(rep(gamma, p)))
-            big_mu = (1/sigma2) * big_sigma %*% t(input_X) %*% input_Y
+                        big_sigma = ginv((1/sigma2) * t(input_X) %*% input_X + diag(rep(gamma, p)))
+                        big_mu = (1/sigma2) * big_sigma %*% t(input_X) %*% input_Y
 
-            if (k > 3) {
-                distance = sum(gamma_sample[k - 1] - gamma_sample[k - 2])
-                if (distance < margin) {
-                  break
+                        if (k > 3) {
+                                distance = sum(gamma_sample[k - 1] - gamma_sample[k - 2])
+                                if (distance < margin) {
+                                        break
+                                }
+                        }
+
+                        eta = p - gamma * sum(diag(big_sigma))
+                        gamma = eta/(t(big_mu) %*% big_mu)
+                        yminus = input_Y - input_X %*% big_mu
+                        sigma2 = as.numeric(t(yminus) %*% yminus/(n - eta))
+
+                        gamma_sample[k] = gamma
+                        sigma2_sample[k] = sigma2
+                        k = k + 1
                 }
-            }
+                estimated_tau = sqrt(2 * gamma)
+                var_EB = sigma2
+                estimated_variance = ifelse(var_SI < var_EB + 10, var_SI, var_EB)
+                # return parameters
+                tuningParameter = estimated_tau * estimated_variance/(nrow(input_X))
+                coef = coef(glmnet(input_X,input_Y,alpha = 1,lambda = tuningParameter))
+                return(list(tuningPar = tuningParameter, coef = coef, var_est = estimated_variance, tau_est = estimated_tau ))
 
-            eta = p - gamma * sum(diag(big_sigma))
-            gamma = eta/(t(big_mu) %*% big_mu)
-            yminus = input_Y - input_X %*% big_mu
-            sigma2 = as.numeric(t(yminus) %*% yminus/(n - eta))
-
-            gamma_sample[k] = gamma
-            sigma2_sample[k] = sigma2
-            k = k + 1
-        }
-        estimated_tau = sqrt(2 * gamma)
-        var_EB = sigma2
-        estimated_variance = ifelse(var_SI < var_EB + 10, var_SI, var_EB)
-        # return parameters
-        tuningParameter = estimated_tau * estimated_variance/(nrow(input_X))
-
-    }, error = function(c) {
-        tuningParameter = cv.glmnet(input_X, input_Y)$lambda.min
-        estimated_variance = var_SI
-        estimated_tau = tuningParameter*nrow(input_X)/estimated_variance
-    })
-    coef = coef(glmnet(input_X,input_Y,alpha = 1,lambda = tuningParameter))
-    return(list(tuningPar = tuningParameter, coef = coef, var_est = estimated_variance, tau_est = estimated_tau ))
+        }, error = function(c) {
+                tuningParameter = cv.glmnet(input_X, input_Y)$lambda.min
+                estimated_variance = var_SI
+                estimated_tau = tuningParameter*nrow(input_X)/estimated_variance
+                coef = coef(glmnet(input_X,input_Y,alpha = 1,lambda = tuningParameter))
+                return(list(tuningPar = tuningParameter, coef = coef, var_est = estimated_variance, tau_est = estimated_tau ))
+        })
 }
