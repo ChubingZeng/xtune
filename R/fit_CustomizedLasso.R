@@ -8,7 +8,7 @@
 #' @param inSigmaSquare variance estimation, default is the estimated variance using R package "selectiveinference"
 #' @return returns the estimated coefficients and penalty factor
 #' @examples
-#' set.seed(99)
+#' set.seed(99)4
 #' n = 100
 #' p = 400
 #' q = 10
@@ -37,7 +37,7 @@ customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,nco
                         tauEst1 = exp(input_Z%*%alphaEst1)
                         coef1 = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst1))
                         varEst1 = inSigmaSquare
-                        if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
+                        if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 1)){
                                 use_eb = eb_tuning(input_X, input_Y)
                                 coef2 = use_eb$coef
                                 tauEst2 = rep(use_eb$tau_est,ncol(input_X))
@@ -54,7 +54,7 @@ customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,nco
                         tauEst1 = exp(input_Z%*%alphaEst1)
                         coef1 = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst1))
                         varEst1 = inSigmaSquare
-                        if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
+                        if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 1)){
                                 use_eb = eb_tuning(input_X, input_Y)
                                 coef2 = use_eb$coef
                                 tauEst2 = rep(use_eb$tau_est,ncol(input_X))
@@ -71,7 +71,7 @@ customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,nco
                         tauEst1 = exp(input_Z%*%alphaEst1)
                         coef1 = coef(glmnet(input_X,input_Y,alpha = 1, lambda = inSigmaSquare, penalty.factor = tauEst1))
                         varEst1 = inSigmaSquare
-                        if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 10)){
+                        if(sum(coef1[-1] == 0) > (length(coef1[-1]) - 1)){
                                 use_eb = eb_tuning(input_X, input_Y)
                                 coef2 = use_eb$coef
                                 tauEst2 = rep(use_eb$tau_est,ncol(input_X))

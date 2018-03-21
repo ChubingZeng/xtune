@@ -13,39 +13,35 @@ customized_lasso(input_X, input_Y, input_Z, initial_value = rep(0,
 
 \item{input_Y}{continuous outcome vector of dimension \eqn{p}.}
 
-\item{initial_val}{initial value for \eqn{\tau}. Default value is 0.1.}
+\item{input_Z}{continuous outcome vector of dimension \eqn{q}.}
 
-\item{max_step}{max step for iterations. Default value is 100.}
+\item{inSigmaSquare}{variance estimation, default is the estimated variance using R package "selectiveinference"}
 
-\item{margin}{convergence criteria. Default value is 0.01.}
+\item{initial_val}{initial value for \eqn{\alpha}. Default value is a vector of \eqn{0}s.}
 }
 \value{
-Returns the estimated tuning parameter and estimated coefficients
+returns the estimated coefficients and penalty factor
 }
 \description{
-\code{customized_lasso} returns the tuning parameter estimated by empirical bayes method.
+\code{customized_lasso} returns the estimated coefficients and penalty factor
 }
 \examples{
 set.seed(99)
 n = 100
-p = 200
-q = 5
+p = 400
+q = 10
 x <- matrix(rnorm(2*n*p,0,1),nrow=2*n,ncol=p)
 z <- matrix(sample(c(0,1),p*q,replace = TRUE,prob = c(0.5,0.5)),p,q)
 z_design <- cbind(rep(1,p),z)
-alpha=c(1,seq(from=-1,to=2,length.out = q))
+alpha=c(2,rnorm(q,0,1))
 betas=rlaplace(n = p, s = 1/exp(z_design\%*\%alpha))
 y <- x\%*\%betas + rnorm(2*n,0,1)
 x_train = x[1:n,]
 y_train = y[1:n]
 x_test = x[(n+1):(2*n),]
 y_test = y[(n+1):(2*n)]
-## customized lasso
-cus_lasso.fit = customized_lasso(inX = x_train,inY = y_train,inZ = z_design)
+cus_lasso.fit = customized_lasso(x_train,y_train,z_design)
 mean((cbind(rep(1,n),x_test)\%*\%(cus_lasso.fit$coef) - y_test)^2)
-## standard lasso
-mean((cbind(rep(1,n),x_test)\%*\%coef(glmnet(x_train,y_train,alpha = 1,lambda=cv.glmnet(x_train,y_train)$lambda.min)) - y_test)^2)
-## adaptive lasso
-ada_lasso = adalasso(x_train,y_train)
-mean((cbind(rep(1,n),x_test)\%*\%c(ada_lasso$intercept.adalasso,ada_lasso$coefficients.adalasso)- y_test)^2)
+1-mean((cbind(rep(1,n),x_test)\%*\%(cus_lasso.fit$coef) - y_test)^2)/var(y_test)
+
 }
