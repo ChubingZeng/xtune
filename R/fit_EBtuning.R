@@ -89,7 +89,7 @@ eb_tuning <- function(input_X, input_Y, initial_val = 0.1, maxstep = 100, margin
         }
 
         estimated_tau = sqrt(2 * gamma)
-        if (!var.cal){
+        if (var.cal){
                 estimated_variance = ifelse(var_est_SI < var_est + 10, var_est_SI, var_est)
         } else{
                 estimated_variance = var_est
