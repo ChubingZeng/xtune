@@ -5,7 +5,8 @@
 \title{Empirical Bayes estimation of Lasso tuning parameter.}
 \usage{
 eb_tuning(input_X, input_Y, initial_val = 0.1, maxstep = 100,
-  margin = 0.01, verbosity = 0, var.cal = FALSE, var.fix = FALSE)
+  margin = 0.01, verbosity = 0, var.cal = FALSE, var.fix = FALSE,
+  var.ini = 1)
 }
 \arguments{
 \item{input_X}{predictor matrix of dimension \eqn{n*q}.}

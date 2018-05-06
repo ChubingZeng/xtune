@@ -24,13 +24,13 @@
 #' mean((cbind(rep(1,n),x_test)%*%coef(glmnet(x_train,y_train,alpha = 1,lambda=cv.glmnet(x_train,y_train)$lambda.min)) - y_test)^2)
 
 
-eb_tuning <- function(input_X, input_Y, initial_val = 0.1, maxstep = 100, margin = 0.01,verbosity = 0,var.cal = FALSE,var.fix = FALSE) {
+eb_tuning <- function(input_X, input_Y, initial_val = 0.1, maxstep = 100, margin = 0.01,verbosity = 0,var.cal = FALSE,var.fix = FALSE,var.ini = 1) {
         ## calculate var_si for initial value
         if (var.cal) {
                 var_est_SI = estimateVar_SI(input_X, input_Y)
                 var_est = var_est_SI
         } else{
-                var_est = 1
+                var_est = var.ini
         }
         # estimate sigma square from SI
         # estiamtes from EB
