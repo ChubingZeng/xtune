@@ -8,6 +8,16 @@ estimateVar_SI <- function(input_X, input_Y) {
         }
         return(temp^2)
 }
+
+estimateVariance <- function(input_X, input_Y,num = 10) {
+        options(warn = -1)
+        temp = array(NA,num)
+        for (i in 1:num){
+                temp[i] = estimateSigma(input_X, input_Y)$sigmahat^2
+        }
+        return(mean(temp,na.rm =T))
+}
+
 ##-------------------- MSE, MSE, MSE! --------------------------##
 get_mse <- function(estimation, true) {
     return(mean((as.vector(estimation) - as.vector(true))^2))
