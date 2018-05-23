@@ -59,6 +59,7 @@ score_function <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est) {
         Z = input_Z
         sigma_square = sigma2_est
         n = nrow(X)
+        p = ncol(X)
         gamma = 2/exp(2 * Z %*% to_estimate)
         Rinv <- backsolve(chol(crossprod(X)/sigma_square + diag(c(1/gamma))), diag(1, p))
         diagSigma <- rowSums(Rinv^2)
