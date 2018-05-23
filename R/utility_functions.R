@@ -1,13 +1,13 @@
-estimateVar_SI <- function(input_X, input_Y) {
-        options(warn = -1)
-        while(TRUE){
-                temp = estimateSigma(input_X, input_Y)$sigmahat
-                if(!is.nan(temp)){
-                        break
-                }
-        }
-        return(temp^2)
-}
+# estimateVar_SI <- function(input_X, input_Y) {
+#         options(warn = -1)
+#         while(TRUE){
+#                 temp = estimateSigma(input_X, input_Y)$sigmahat
+#                 if(!is.nan(temp)){
+#                         break
+#                 }
+#         }
+#         return(temp^2)
+# }
 
 estimateVariance <- function(input_X, input_Y,num = 10) {
         options(warn = -1)
