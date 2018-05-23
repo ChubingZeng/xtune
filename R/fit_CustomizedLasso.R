@@ -29,7 +29,7 @@
 #' 1-mean((cbind(rep(1,n),x_test)%*%(cus_lasso.fit$coef) - y_test)^2)/var(y_test)
 #'
 ###------------------------------ Customized LASSO ------------------------------###
-customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,ncol(input_Z)),inSigmaSquare = estimateVar_SI(input_X,input_Y), method = "L-BFGS-B"){
+customized_lasso <- function(input_X, input_Y, input_Z,initial_value = rep(0,ncol(input_Z)),inSigmaSquare = estimateVariance(input_X,input_Y), method = "L-BFGS-B"){
         N = nrow(input_X)
         P = ncol(input_X)
         if(method == "L-BFGS-B"){
