@@ -40,17 +40,31 @@ relative_change <- function(x, x_ref) {
 
 
 
+# score_function <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est) {
+#         X = input_X
+#         Y = input_Y
+#         Z = input_Z
+#         sigma_s = sigma2_est
+#         n = nrow(X)
+#         gamma = 2/exp(2 * Z %*% to_estimate)  ## to_estimate:alpha estimates
+#         big_sigma = ginv(1/sigma_s * t(X) %*% X + diag(c(1/gamma)))
+#         big_mu = 1/sigma_s * big_sigma %*% t(X) %*% Y
+#         dev_gamma = (gamma - diag(big_sigma) - big_mu^2)/(gamma^2)
+#         return(-t(dev_gamma) %*% (as.vector(gamma) * Z))
+# }
+
 score_function <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est) {
         X = input_X
         Y = input_Y
         Z = input_Z
-        sigma_s = sigma2_est
+        sigma_square = sigma2_est
         n = nrow(X)
-        gamma = 2/exp(2 * Z %*% to_estimate)  ## to_estimate:alpha estimates
-        big_sigma = ginv(1/sigma_s * t(X) %*% X + diag(c(1/gamma)))
-        big_mu = 1/sigma_s * big_sigma %*% t(X) %*% Y
-        dev_gamma = (gamma - diag(big_sigma) - big_mu^2)/(gamma^2)
-        return(-t(dev_gamma) %*% (as.vector(gamma) * Z))
+        gamma = 2/exp(2 * Z %*% to_estimate)
+        Rinv <- backsolve(chol(crossprod(X)/sigma_square + diag(c(1/gamma))), diag(1, p))
+        diagSigma <- rowSums(Rinv^2)
+        mu_vec <- (Rinv %*% (crossprod(Rinv, crossprod(X,Y))))/sigma_square
+        dev_gamma = (gamma - diagSigma - mu_vec^2)/(gamma^2)
+        return(-crossprod(dev_gamma,as.vector(gamma) * Z))
 }
 
 sgd_momentum <- function(input_X,input_Y,input_Z,initial_val = rep(0,ncol(input_Z)),
