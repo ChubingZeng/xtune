@@ -98,6 +98,20 @@ sgd_momentum <- function(input_X,input_Y,input_Z,initial_val = rep(0,ncol(input_
 #         return(as.numeric(normapprox))
 # }
 
+# approx_likelihood <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est) {
+#         X = input_X
+#         Y = input_Y
+#         Z = input_Z
+#         sigma_s = sigma2_est
+#         n = nrow(X)
+#         gamma = 2/exp(2 * Z %*% to_estimate)  ## to_estimate:alpha estimates
+#         K = sigma_s * diag(n) + X %*% diag(c(gamma)) %*% t(X)
+#         logdetK = determinant(K)$modulus[1]
+#         part1 = t(Y) %*% solve(K,Y)
+#         normapprox = 1/2 * (part1 + logdetK)
+#         return(as.numeric(normapprox))
+# }
+
 approx_likelihood <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est) {
         X = input_X
         Y = input_Y
@@ -107,7 +121,7 @@ approx_likelihood <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est
         gamma = 2/exp(2 * Z %*% to_estimate)  ## to_estimate:alpha estimates
         K = sigma_s * diag(n) + X %*% diag(c(gamma)) %*% t(X)
         logdetK = determinant(K)$modulus[1]
-        part1 = t(Y) %*% solve(K,Y)
+        part1 = t(Y) %*% ginv(K) %*% Y
         normapprox = 1/2 * (part1 + logdetK)
         return(as.numeric(normapprox))
 }
