@@ -54,7 +54,7 @@ eb_tuning<-function (input_X, input_Y, var.ini = estimateVariance(input_X,input_
                 }
                 eta <- p - gamma * (sum(diagSigma))
                 gamma <- eta/(t(mu_vec) %*% mu_vec)
-                if (gamma - gamma_old < margin) {
+                if ((gamma - gamma_old) < margin) {
                         break
                 }
                 if (!var.fix) {
