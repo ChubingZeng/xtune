@@ -158,3 +158,12 @@ likelihood.alpha.theta.gradient<-function(alpha,theta,delta){
 accuracy <- function(predicted,true){
         return(sum(predicted == true)/length(true))
 }
+
+compute_likelihood <- function(X,Y,gamma,sigma.square) {
+        n = nrow(X)
+        K = sigma.square * diag(n) + X %*% diag(c(gamma)) %*% t(X)
+        logdetK = determinant(K)$modulus[1]
+        part1 = t(Y) %*% solve(K,Y)
+        normapprox = 1/2 * (part1 + logdetK)
+        return(as.numeric(normapprox))
+}
