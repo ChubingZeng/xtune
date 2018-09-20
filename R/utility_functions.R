@@ -125,4 +125,33 @@ approx_likelihood <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est
 #         normapprox = 1/2 * (part1 + logdetK)
 #         return(as.numeric(normapprox))
 # }
+update_alpha<-function(delta.init,theta,maxstep_inner,tol.delta){
+        ## initial
+        delta.old = delta.init
+        k_inner = 1
+        while (k_inner < maxstep_inner){
+                ## given delta update alpha
+                alpha.est <- optim(alpha,likelihood.alpha.theta,likelihood.alpha.theta.gradient,theta = theta,delta=delta.old,method = "BFGS")$par
+                ## given alpha update delta
+                gamma = 2*exp(-2*Z%*%alpha.est)
+                delta.new = coef(glmnet(X,Y,alpha = 0, lambda = sigma.square/n*sum(1/gamma)/p), penalty.factor = 1/gamma,intercept = F)[-1]
+                if (sum(abs(delta.new - delta.old)) < tol.delta){
+                        break
+                }
+                k_inner = k_inner + 1
+                delta.old <- delta.new
+        }
+        return(list(alpha.est=alpha.est,inner_iter = k_inner))
+}
+
+likelihood.alpha.theta<-function(alpha,theta,delta){
+        gamma = 2*exp(-2*Z%*%alpha)
+        return(as.numeric(t(theta)%*%gamma + delta^2%*%(1/gamma)))
+}
+
+likelihood.alpha.theta.gradient<-function(alpha,theta,delta){
+        gamma = 2*exp(-2*Z%*%alpha)
+        dev_gamma = (theta - delta^2/(gamma^2))
+        return(as.vector(crossprod(dev_gamma,as.vector(gamma) * Z)*(-2)))
+}
 

@@ -26,7 +26,7 @@ returns the estimated coefficients and penalty factor
 \code{customized_lasso} returns the estimated coefficients and penalty factor
 }
 \examples{
-set.seed(99)
+set.seed(99)4
 n = 100
 p = 400
 q = 10

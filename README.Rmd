@@ -44,9 +44,6 @@ library(classo)
 ```
 
 ## Example
-
-
-
 ### Empirical Bayes Tuning
 
 ### LASSO with custom penalization
