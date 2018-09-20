@@ -155,3 +155,6 @@ likelihood.alpha.theta.gradient<-function(alpha,theta,delta){
         return(as.vector(crossprod(dev_gamma,as.vector(gamma) * Z)*(-2)))
 }
 
+accuracy <- function(predicted,true){
+        return(sum(predicted == true)/length(true))
+}
