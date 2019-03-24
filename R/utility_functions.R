@@ -9,14 +9,16 @@
 #         return(temp^2)
 # }
 
-estimateVariance <- function(input_X, input_Y,num = 10) {
+estimateVariance<-function(input_X, input_Y,num = 10) {
         options(warn = -1)
         temp = array(NA,num)
         for (i in 1:num){
-                temp[i] = estimateSigma(input_X, input_Y)$sigmahat^2
+                c = estimateSigma(input_X, input_Y)$sigmahat^2
+                temp[i] = ifelse(is.infinite(c),NA,c)
         }
         return(mean(temp,na.rm =T))
 }
+
 
 ##-------------------- MSE, MSE, MSE! --------------------------##
 get_mse <- function(estimation, true) {

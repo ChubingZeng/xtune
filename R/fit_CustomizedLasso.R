@@ -8,7 +8,7 @@
 #' @param inSigmaSquare variance estimation, default is the estimated variance using R package "selectiveinference"
 #' @return returns the estimated coefficients and penalty factor
 #' @examples
-#' set.seed(99)4
+#' set.seed(99)
 #' n = 100
 #' p = 400
 #' q = 10

@@ -37,8 +37,6 @@ CusLasso.l2(X, Y, Z, sigma.square = estimateVariance(X, Y),
 \item{beta_hat}{estimated beta coefficients from regression (no intercept term)}
 
 \item{x_predict}{data for prediction (no column of 1 needed)}
-
-\item{X}{predictor matrix of dimension \eqn{n*q}.}
 }
 \value{
 Returns the estimated beta coefficients for classification and pseudo probablity
