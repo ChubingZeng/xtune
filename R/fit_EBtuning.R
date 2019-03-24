@@ -76,3 +76,13 @@ eb_tuning<-function (input_X, input_Y, var.ini = estimateVariance(input_X,input_
         return(list(tuningPar = tuningParameter, coef = coef, var_est = estimated_variance,
                     tau_est = estimated_tau))
 }
+
+estimateVariance<-function(X,Y,num = 10) {
+        options(warn = -1)
+        temp = array(NA,num)
+        for (i in 1:num){
+                c = selectiveInference::estimateSigma(X,Y)$sigmahat^2
+                temp[i] = ifelse(is.infinite(c),NA,c)
+        }
+        return(mean(temp,na.rm =T))
+}
