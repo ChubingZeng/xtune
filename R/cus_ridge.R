@@ -1,6 +1,6 @@
 #' Customized LASSO using iterative reweighted l2
 #'
-#' \code{CusLasso.l2} estimated beta coefficients and pseudo probablity
+#' \code{cus_ridge} estimated beta coefficients and pseudo probablity
 #' @param X predictor matrix of dimension \eqn{n*q} used for previous regression
 #' @param y continuous outcome vector of dimension \eqn{n} used for previous regression
 #' @param beta_hat estimated beta coefficients from regression (no intercept term)
@@ -16,10 +16,13 @@
 #' @param maxstep_inner maximum inner loop step
 #' @param tol.delta stopping creteria for inner loop
 #' @param compute.likelihood compute likelihood or not
-#' @examples
-#' CusLassol2.result = CusLasso.l2(x_train,y_train,Z,sigma.square = sig.est,compute.likelihood = T)
+#' @param verbosity track update process or not
+#' @import glmnet
+#' @import crayon
+#' @importFrom stats optim
+#' @export
 
-Cus.Ridge<- function(X,Y,Z,sigma.square = estimateVariance(X,Y),
+cus_ridge<- function(X,Y,Z,sigma.square = estimateVariance(X,Y),
                      alpha.init = rep(0,ncol(Z)),
                      maxstep = 100,
                      margin = 0.001,
@@ -66,57 +69,3 @@ Cus.Ridge<- function(X,Y,Z,sigma.square = estimateVariance(X,Y),
         return(list(coef.cusRidge = coef.cusRidge,alpha.hat = alpha.old,n_iter = k-1,sigma.square = sigma.square,likelihood.score = likelihood.score))
 }
 
-update_alpha.ridge<-function(X,Y,Z,alpha.old,sigma.square,theta,maxstep_inner,tol.inner){
-        ## initial
-        alpha.iner.old = alpha.old
-        k_inner = 1
-        n=nrow(X)
-        p=ncol(X)
-        while (k_inner < maxstep_inner){
-                # given alpha update delta
-                gamma = exp(-Z%*%alpha.iner.old)
-                sd_y <- sqrt(var(Y)*(n-1)/n)
-                C=sum(1/gamma)/p* sd_y*sigma.square/n
-                delta.est=coef(glmnet(X,Y,alpha=0, penalty.factor = 1/gamma,lambda = C, standardize = F, intercept = FALSE))[-1]
-
-                ## given delta update alpha
-                alpha.iner.new <- stats::optim(alpha.old,likelihood.alpha.theta.ridge,likelihood.alpha.theta.gradient.ridge,Z=Z,theta = theta,delta=delta.est,method = "BFGS")$par
-                if (sum(abs(alpha.iner.new - alpha.iner.old)) < tol.inner){
-                        break
-                }
-                k_inner = k_inner + 1
-                alpha.iner.old <- alpha.iner.new
-        }
-        return(list(alpha.est=alpha.iner.old,inner_iter = k_inner))
-}
-
-likelihood.alpha.theta.ridge<-function(Z,alpha,theta,delta){
-        gamma = exp(-Z%*%alpha)
-        return(as.numeric(t(theta)%*%gamma + delta^2%*%(1/gamma)))
-}
-
-likelihood.alpha.theta.gradient.ridge<-function(Z,alpha,theta,delta){
-        gamma = exp(-Z%*%alpha)
-        dev_gamma = (theta - delta^2/(gamma^2))
-        return(-crossprod(dev_gamma,as.vector(gamma) * Z))
-}
-
-approx_likelihood.ridge <- function(to_estimate,X,Y,Z,sigma.square.est) {
-        n = nrow(X)
-        gamma = exp(-Z %*% to_estimate)  ## to_estimate:alpha estimates
-        K = sigma.square.est * diag(n) + X %*% diag(c(gamma)) %*% t(X)
-        logdetK = determinant(K)$modulus[1]
-        part1 = t(Y) %*% solve(K,Y)
-        normapprox = 1/2 * (part1 + logdetK)
-        return(as.numeric(normapprox))
-}
-
-estimateVariance<-function(X,Y,num = 10) {
-        options(warn = -1)
-        temp = array(NA,num)
-        for (i in 1:num){
-                c = selectiveInference::estimateSigma(X,Y)$sigmahat^2
-                temp[i] = ifelse(is.infinite(c),NA,c)
-        }
-        return(mean(temp,na.rm =T))
-}
