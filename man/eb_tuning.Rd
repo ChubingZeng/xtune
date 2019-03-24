@@ -13,7 +13,11 @@ eb_tuning(X, Y, var.ini = estimateVariance(X, Y), initial_val = 0.1,
 
 \item{Y}{continuous outcome vector of dimension \eqn{p}.}
 
+\item{var.ini}{initial estimates of variance from external estimation}
+
 \item{initial_val}{initial value for \eqn{\tau}. Default value is 0.1.}
+
+\item{maxstep}{max step for iterations. Default value is 100.}
 
 \item{margin}{convergence criteria. Default value is 0.01.}
 
@@ -22,8 +26,6 @@ eb_tuning(X, Y, var.ini = estimateVariance(X, Y), initial_val = 0.1,
 \item{var.compare}{whether or not to compare the variance estimates from different methods}
 
 \item{var.fix}{if TRUE, fix variance estimates}
-
-\item{max_step}{max step for iterations. Default value is 100.}
 }
 \value{
 Returns the estimated tuning parameter and estimated coefficients

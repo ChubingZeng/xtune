@@ -1,3 +1,4 @@
+#' @importFrom stats optim var coef
 update_alpha.lasso<-function(X,Y,Z,alpha.old,sigma.square,theta,maxstep_inner,tol.inner){
         ## initial
         alpha.iner.old = alpha.old

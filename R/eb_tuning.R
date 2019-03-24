@@ -3,8 +3,9 @@
 #' \code{eb_tuning} returns the tuning parameter estimated by empirical bayes method.
 #' @param X predictor matrix of dimension \eqn{n*q}.
 #' @param Y continuous outcome vector of dimension \eqn{p}.
+#' @param var.ini initial estimates of variance from external estimation
 #' @param initial_val initial value for \eqn{\tau}. Default value is 0.1.
-#' @param max_step max step for iterations. Default value is 100.
+#' @param maxstep max step for iterations. Default value is 100.
 #' @param margin convergence criteria. Default value is 0.01.
 #' @param verbosity whether to track the update process
 #' @param var.compare whether or not to compare the variance estimates from different methods
