@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# classo: R package for LASSO with custom penalization based on external information
+# classo: R package for $L_1$ and $L_2$ penalized regression with differential penalties
 
 ## Introduction
 Standard $L_1$ penalized regression (LASSO) and $L_2$ penalized regression (Ridge) have one global penalty parameter $\lambda$ that controls the amount of shrinakge for all predictors, which could potentially undershrinking important features and overshrinking unimportant features. 

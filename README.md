@@ -1,7 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-classo: R package for LASSO with custom penalization based on external information
+classo: classo: R package for $L_1$ and $L_2$ penalized regression with differential penalties
 ==================================================================================
+[![Build Status](https://travis-ci.org/ChubingZeng/classo.svg?branch=master)](https://travis-ci.org/ChubingZeng/classo)
 
 Introduction
 ------------
