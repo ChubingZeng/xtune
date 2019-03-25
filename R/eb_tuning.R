@@ -1,4 +1,4 @@
-#' Empirical Bayes estimation of Lasso tuning parameter.
+#' Empirical Bayes estimation of Lasso tuning parameter, add ridge future
 #'
 #' \code{eb_tuning} returns the tuning parameter estimated by empirical bayes method.
 #' @param X predictor matrix of dimension \eqn{n*q}.
