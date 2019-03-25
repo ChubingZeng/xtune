@@ -2,7 +2,7 @@
 % Please edit documentation in R/eb_tuning.R
 \name{eb_tuning}
 \alias{eb_tuning}
-\title{Empirical Bayes estimation of Lasso tuning parameter.}
+\title{Empirical Bayes estimation of Lasso tuning parameter, add ridge future}
 \usage{
 eb_tuning(X, Y, var.ini = estimateVariance(X, Y), initial_val = 0.1,
   maxstep = 100, margin = 0.01, verbosity = 0, var.compare = TRUE,
