@@ -1,3 +1,4 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 classo: R package for LASSO with custom penalization based on external information
 ==================================================================================
@@ -5,7 +6,11 @@ classo: R package for LASSO with custom penalization based on external informati
 Introduction
 ------------
 
-The aim of *classo* is to extend standard LASSO to allow the regression coefficients to be differentially penalized based on external information which may be informative for the effects of predictors on the outcome of interest.
+Standard *L*<sub>1</sub> penalized regression (LASSO) and *L*<sub>2</sub> penalized regression (Ridge) have one global penalty parameter *λ* that controls the amount of shrinakge for all predictors, which could potentially undershrinking important features and overshrinking unimportant features.
+
+The aim of *classo* is to allow **differential amount of shrinkage** for each regression coefficients for *L*<sub>1</sub> and *L*<sub>2</sub> penalized regression. The amount of shrinkage for each predictor is modeled as a function of the prior knowledge *Z* provided into the model.
+
+![Alt text](/Users/chubingzeng/Desktop/objective.png)
 
 This package has two main functions for now.
 
@@ -35,8 +40,8 @@ devtools::install_github("ChubingZeng/classo")
 library(classo)
 ```
 
-Usage
------
+Example
+-------
 
 ### Empirical Bayes Tuning
 
