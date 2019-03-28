@@ -8,7 +8,7 @@
 #' @export
 
 estimateVariance<-function(X,Y,num = 10) {
-        options(warn = -1)
+        #options(warn = -1)
         temp = array(NA,num)
         for (i in 1:num){
                 c = estimateSigma(X,Y)$sigmahat^2
