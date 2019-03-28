@@ -1,6 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-classo: classo: R package for $L_1$ and $L_2$ penalized regression with differential penalties
+classo: classo: R package for ![equation](https://latex.codecogs.com/gif.latex?L_1) and ![equation](https://latex.codecogs.com/gif.latex?L_2) penalized regression with differential penalties
 ==================================================================================
 [![Build Status](https://travis-ci.org/ChubingZeng/classo.svg?branch=master)](https://travis-ci.org/ChubingZeng/classo)
 
@@ -11,7 +11,8 @@ Standard *L*<sub>1</sub> penalized regression (LASSO) and *L*<sub>2</sub> penali
 
 The aim of *classo* is to allow **differential amount of shrinkage** for each regression coefficients for *L*<sub>1</sub> and *L*<sub>2</sub> penalized regression. The amount of shrinkage for each predictor is modeled as a function of the prior knowledge *Z* provided into the model.
 
-![Alt text](/Users/chubingzeng/Desktop/objective.png)
+![objective](https://user-images.githubusercontent.com/23446412/55188606-0d625c80-5159-11e9-9b74-3dbdc70e9ce3.png)
+
 
 This package has two main functions for now.
 
