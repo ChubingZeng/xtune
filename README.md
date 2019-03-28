@@ -1,6 +1,5 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-classo: classo: R package for ![equation](https://latex.codecogs.com/gif.latex?L_1) and ![equation](https://latex.codecogs.com/gif.latex?L_2) penalized regression with differential penalties
+classo: R package for *L*<sub>1</sub> and *L*<sub>2</sub> penalized regression with differential penalties
 ==================================================================================
 [![Build Status](https://travis-ci.org/ChubingZeng/classo.svg?branch=master)](https://travis-ci.org/ChubingZeng/classo)
 
