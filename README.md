@@ -3,14 +3,14 @@ classo: R package for *L*<sub>1</sub> and *L*<sub>2</sub> penalized regression w
 ==================================================================================
 [![Build Status](https://travis-ci.org/ChubingZeng/classo.svg?branch=master)](https://travis-ci.org/ChubingZeng/classo)
 
-Introduction
+&#x1F4D7;  Introduction
 ------------
 
 Standard *L*<sub>1</sub> penalized regression (LASSO) and *L*<sub>2</sub> penalized regression (Ridge) have one global penalty parameter *λ* that controls the amount of shrinakge for all predictors, which could potentially undershrinking important features and overshrinking unimportant features.
 
 The aim of *classo* is to allow **differential amount of shrinkage** for each regression coefficients for *L*<sub>1</sub> and *L*<sub>2</sub> penalized regression. The amount of shrinkage for each predictor is modeled as a function of the prior knowledge *Z* provided into the model.
 
-![objective](https://user-images.githubusercontent.com/23446412/55188606-0d625c80-5159-11e9-9b74-3dbdc70e9ce3.png)
+![objective](https://user-images.githubusercontent.com/23446412/55191031-5537b280-515e-11e9-89dd-a991275a4a83.png)
 
 
 This package has two main functions for now.
@@ -27,7 +27,7 @@ $$ min\_{\\beta}\\frac{1}{2} \\sum\_{i=1}^{i=p}(Y\_i - \\beta\_0 - \\sum\_{j=1}^
 
 Currently, we allow both continuous and binary outcomes. The binary outcome case is based on the extension of linear outcome case using linear discriminat analysis.
 
-Installation
+&#x1F4D9;  Installation
 ------------
 
 You can install *classo* from github with:
