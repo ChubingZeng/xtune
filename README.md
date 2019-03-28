@@ -2,6 +2,7 @@
 classo: R package for *L*<sub>1</sub> and *L*<sub>2</sub> penalized regression with differential penalties
 ==================================================================================
 [![Build Status](https://travis-ci.org/ChubingZeng/classo.svg?branch=master)](https://travis-ci.org/ChubingZeng/classo)
+[![Coverage status](https://codecov.io/gh/ChubingZeng/classo/branch/master/graph/badge.svg)](https://codecov.io/github/ChubingZeng/classo?branch=master)
 
 &#x1F4D7;  Introduction
 ------------

@@ -19,8 +19,10 @@ Imports:
 Depends:
    R (>= 2.10)
 RoxygenNote: 6.0.1
-Suggests: rmutil,
+Suggests: 
+    rmutil,
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    covr
 VignetteBuilder: knitr
