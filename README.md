@@ -12,25 +12,21 @@ The aim of *classo* is to allow **differential amount of shrinkage** for each re
 
 ![objective](https://user-images.githubusercontent.com/23446412/55191031-5537b280-515e-11e9-89dd-a991275a4a83.png)
 
-
 This package has two main functions for now.
 
--   Empirical Bayes (EB) tuning
-    EB tuning is a novel way to find the tuning parameter for LASSO, as an alternative to cross-validation.
+-   Customized Penalized Regression: *cus_penalized_reg()* 
 
-$$ min\_{\\beta}\\frac{1}{2} \\sum\_{i=1}^{i=p}(Y\_i - \\beta\_0 - \\sum\_{j=1}^{j=p}X\_{ij}\\beta\_j)^2 + \\lambda \\sum\_{j=1}^{j=p}|\\beta\_j| $$
+    Customized Penalized Regression extends standard LASSO to allow differential penalization on for each regression coefficients. 
 
--   Customized LASSO
-    Customized LASSO extends standard LASSO to allow differential penalization on coefficients. You can choose to plug in external data which contains information about the predictors. For example, Gene Ontology annotations or previous study restults. Please note that the number of rows in the external data should match the number of columns in your design matrix.
+-   Empirical Bayes (EB) tuning: *eb_tuning()* 
 
-$$ min\_{\\beta}\\frac{1}{2} \\sum\_{i=1}^{i=p}(Y\_i - \\beta\_0 - \\sum\_{j=1}^{j=p}X\_{ij}\\beta\_j)^2 + \\sum\_{j=1}^{j=p} \\lambda(Z\_j)|\\beta\_j| $$
+    EB tuning is a novel way to find the tuning parameter for LASSO and Ridge regression using an empirical Bayes approach. It can be used as an alternative to cross-validation.
 
 Currently, we allow both continuous and binary outcomes. The binary outcome case is based on the extension of linear outcome case using linear discriminat analysis.
 
 &#x1F4D9;  Installation
 ------------
-
-You can install *classo* from github with:
+*classo* can be stored from Github:
 
 ``` r
 # install.packages("devtools")
@@ -41,18 +37,22 @@ devtools::install_github("ChubingZeng/classo")
 library(classo)
 ```
 
-Example
+&#x1F4D8;  Example
 -------
-
-### Empirical Bayes Tuning
-
-### LASSO with custom penalization
-
-Example
--------
-
-This is a basic example which shows you how to solve a common problem:
-
+Here are some basic examples on how to use this package:
+#### LASSO with differential amount of penalties
+``` r
+## basic example code
+```
+#### Ridge with differential amount of penalties
+``` r
+## basic example code
+```
+#### Empirical Bayes tuning for LASSO
+``` r
+## basic example code
+```
+#### Empirical Bayes tuning for Ridge
 ``` r
 ## basic example code
 ```
