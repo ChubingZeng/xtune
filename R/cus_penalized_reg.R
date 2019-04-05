@@ -18,7 +18,7 @@
 #' @importFrom stats optim
 #' @export
 
-cus_penalized_reg <- function(X,Y,Z,c = 1,sigma.square = estimateVariance(X,Y),
+ipreg <- function(X,Y,Z,c = 1,sigma.square = estimateVariance(X,Y),
                               alpha.init = rep(0,ncol(Z)),
                               maxstep = 100,
                               margin = 0.001,
