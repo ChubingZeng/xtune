@@ -15,5 +15,4 @@ test_that("estimateVariance errors when input is wrong sizes", {
         Y <- runif(100)
 
         expect_error(estimateVariance(X, Y))
-
 })

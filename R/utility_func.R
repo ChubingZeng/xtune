@@ -46,16 +46,6 @@ approx_likelihood.lasso <- function(to_estimate,X,Y,Z,sigma.square.est) {
         return(as.numeric(normapprox))
 }
 
-estimateVariance<-function(X,Y,num = 10) {
-        options(warn = -1)
-        temp = array(NA,num)
-        for (i in 1:num){
-                c = selectiveInference::estimateSigma(X,Y)$sigmahat^2
-                temp[i] = ifelse(is.infinite(c),NA,c)
-        }
-        return(mean(temp,na.rm =T))
-}
-
 update_alpha.ridge<-function(X,Y,Z,alpha.old,sigma.square,theta,maxstep_inner,tol.inner){
         ## initial
         alpha.iner.old = alpha.old

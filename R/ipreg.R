@@ -1,10 +1,10 @@
-#' Customized LASSO Regression
+#' L1 and L2 penalized regression with individual amount of shrinkage for each regression coefficient based on external information.
 #'
-#' \code{cus_lasso} estimated beta coefficients and pseudo probablity
+#' \code{ipreg} estimated beta coefficients and pseudo probablity
 #' @param X predictor matrix of dimension \eqn{n*q} used for previous regression
 #' @param Y continuous outcome vector of dimension \eqn{n} used for previous regression
 #' @param Z external information data matrix of dimension \eqn{p*q}
-#' @param c the elasticnet mixing parameter, c= 0, ridge, c=1, lasso
+#' @param method method = "Lasso" for Lasso regression, method = "Ridge" for Ridge regression
 #' @param sigma.square variance estimation, default is the estimated variance using R package "selectiveinference"
 #' @param alpha.init initial value for alpha, default is rep(1,p)
 #' @param maxstep maximal step of iterations
@@ -18,7 +18,7 @@
 #' @importFrom stats optim
 #' @export
 
-ipreg <- function(X,Y,Z,c = 1,sigma.square = estimateVariance(X,Y),
+ipreg <- function(X,Y,Z,method = "Lasso",sigma.square = estimateVariance(X,Y),
                               alpha.init = rep(0,ncol(Z)),
                               maxstep = 100,
                               margin = 0.001,
@@ -27,7 +27,7 @@ ipreg <- function(X,Y,Z,c = 1,sigma.square = estimateVariance(X,Y),
                               compute.likelihood = FALSE,
                               verbosity = 1){
         n = nrow(X);p=ncol(X);q = ncol(Z)
-        if (c == 0) { ##---------- c = 0: ridge regression
+        if (method== "Ridge") { ##---------- ridge regression
                 ## Initialize
                 alpha.old = alpha.init
                 likelihood.score = c()
@@ -65,7 +65,7 @@ ipreg <- function(X,Y,Z,c = 1,sigma.square = estimateVariance(X,Y),
                 cus.coef <- coef(glmnet(X,Y,alpha=0, penalty.factor = 1/gamma,lambda = C))
         }
 
-        if (c == 1){ ##------------ c = 1: lasso regression
+        if (method== "Lasso"){ ##------------ lasso regression
                 ## Initialize
                 alpha.old = alpha.init
                 likelihood.score = c()

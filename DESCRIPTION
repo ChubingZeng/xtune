@@ -1,13 +1,14 @@
 Package: classo
 Type: Package
-Title: Customized Penalized Regression Incorporating External Information
+Title: L1 and L2 Penalized Regression with individual Penalties by Incorporating External Information
 Version: 0.1.0
 Author: Chubing Zeng
 Maintainer: Chubing Zeng <chubingz@usc.edu>
-Description: R package for Empirical Bayes tuning and Customized Lasso with External Information. 
-     Empirical Bayes tuning provides an way to estimating tuning parameter in Lasso as 
-     an alternative to cross validation. Customized Lasso generalizes standard Lasso by 
-     allowing differential shrinkage for parameters, with the goal of improving prediction. 
+Description: This package has two main functions. First, eb_tuning() provides an Empirical Bayes way 
+     to choose the tuning parameter in Lasso and Ridge regression, as an alternative to cross-validation. 
+     Second, ipreg() extends the standard Lasso and Ridge regression to allow individual amount of shrinkage 
+     for each regression coefficient. The individual penalty parameters are modeled as a function of the external 
+     information Z, and are estimated by optimizing their marginal likelihood with the majorization-minimization procedure. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

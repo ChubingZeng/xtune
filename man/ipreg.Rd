@@ -2,9 +2,9 @@
 % Please edit documentation in R/ipreg.R
 \name{ipreg}
 \alias{ipreg}
-\title{Customized LASSO Regression}
+\title{L1 and L2 penalized regression with individual amount of shrinkage for each regression coefficient based on external information.}
 \usage{
-ipreg(X, Y, Z, c = 1, sigma.square = estimateVariance(X, Y),
+ipreg(X, Y, Z, method = "Lasso", sigma.square = estimateVariance(X, Y),
   alpha.init = rep(0, ncol(Z)), maxstep = 100, margin = 0.001,
   maxstep_inner = 50, tol.inner = 0.1, compute.likelihood = FALSE,
   verbosity = 1)
@@ -16,7 +16,7 @@ ipreg(X, Y, Z, c = 1, sigma.square = estimateVariance(X, Y),
 
 \item{Z}{external information data matrix of dimension \eqn{p*q}}
 
-\item{c}{the elasticnet mixing parameter, c= 0, ridge, c=1, lasso}
+\item{method}{method = "Lasso" for Lasso regression, method = "Ridge" for Ridge regression}
 
 \item{sigma.square}{variance estimation, default is the estimated variance using R package "selectiveinference"}
 
@@ -35,5 +35,5 @@ ipreg(X, Y, Z, c = 1, sigma.square = estimateVariance(X, Y),
 \item{verbosity}{track update process or not}
 }
 \description{
-\code{cus_lasso} estimated beta coefficients and pseudo probablity
+\code{ipreg} estimated beta coefficients and pseudo probablity
 }
