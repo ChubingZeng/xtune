@@ -14,94 +14,108 @@
 #' @param compute.likelihood compute likelihood or not
 #' @param verbosity track update process or not
 #' @import glmnet
-#' @import crayon
 #' @importFrom stats optim
 #' @export
 
-ipreg <- function(X,Y,Z,method = "Lasso",sigma.square = estimateVariance(X,Y),
-                              alpha.init = rep(0,ncol(Z)),
-                              maxstep = 100,
-                              margin = 0.001,
-                              maxstep_inner = 50,
-                              tol.inner = 0.1,
-                              compute.likelihood = FALSE,
-                              verbosity = 1){
-        n = nrow(X);p=ncol(X);q = ncol(Z)
-        if (method== "Ridge") { ##---------- ridge regression
-                ## Initialize
-                alpha.old = alpha.init
-                likelihood.score = c()
-                k = 1
-                while(k < maxstep){
-                        # Given alpha, update theta
-                        gamma = exp(-Z%*%alpha.old) ## gamma is the variance of beta in this vase
-                        Sigma_y=sigma.square * diag(n) +(t(t(X)*c(gamma)))%*%t(X)
-                        theta = colSums(X*solve(Sigma_y,X))
+ipreg <- function(X,Y,Z,method = c("lasso","ridge"),sigma.square,
+                   alpha.init,
+                   maxstep = 100,
+                   margin = 0.001,
+                   maxstep_inner = 50,
+                   tol.inner = 0.01,
+                   compute.likelihood = FALSE,
+                   verbosity = 0){
 
-                        # Compute likelihood
-                        if (compute.likelihood == TRUE){
-                                likelihood.score = c(likelihood.score,approx_likelihood.ridge(alpha.old,X,Y,Z,sigma.square))
-                        }
+        method = match.arg(method)
 
-                        # Given theta, update alpha
-                        update.result <-update_alpha.ridge(X,Y,Z,alpha.old = alpha.old,sigma.square = sigma.square,theta = theta,maxstep_inner = maxstep_inner,tol.inner = tol.inner)
-                        alpha.new <- update.result$alpha.est
+        ## checking user inputs
+        ### Check X
+        np = dim(X)
+        if (is.null(np) | (np[2] <= 1))
+                stop("x should be a matrix with 2 or more columns")
+        nobs = as.integer(np[1]); nvar = as.integer(np[2])
 
-                        # Check convergence
-                        if(sum(abs(alpha.new - alpha.old)) < margin ){
-                                cat(red$bold("Done!\n"))
-                                break
-                        }
-                        alpha.old <- alpha.new
+        ### Check Y
+        dimY = dim(Y)
+        nrowY = ifelse(is.null(dimY), length(Y), dimY[1])
+        if (nrowY != nobs)
+                stop(paste("number of observations in Y (", nrowY, ") not equal to the number of rows of X (",
+                           nobs, ")", sep = ""))
 
-                        # Track iteration progress
-                        if (verbosity == 1){
-                                cat(blue$italic("#-----------------"),magenta("Iteration",k,"Done"),blue$italic("-----------------#\n"),sep = "")
-                        }
-                        k <- k+1
-                }
-                gamma = exp(-Z%*%alpha.old)
-                C=sum(1/gamma)/p*sigma.square/n
-                cus.coef <- coef(glmnet(X,Y,alpha=0, penalty.factor = 1/gamma,lambda = C))
+        ### Check sigma.square
+        if (missing(sigma.square)){
+                sigma.square = estimateVariance(X,Y)
+        } else if (! is.double(sigma.square)){
+                stop("sigma square is not a number")
+        } else{
+                sigma.square = sigma.square
         }
 
-        if (method== "Lasso"){ ##------------ lasso regression
-                ## Initialize
-                alpha.old = alpha.init
-                likelihood.score = c()
-                k = 1
-                while(k < maxstep){
-                        # Given alpha, update theta
-                        gamma = 2*exp(-2*Z%*%alpha.old)
-                        Sigma_y=sigma.square * diag(n) +(t(t(X)*c(gamma)))%*%t(X)
-                        theta = colSums(X*solve(Sigma_y,X))
-
-                        # Compute likelihood
-                        if (compute.likelihood == TRUE){
-                                likelihood.score = c(likelihood.score,approx_likelihood.lasso(alpha.old,X,Y,Z,sigma.square))
-                        }
-
-                        # Given theta, update alpha
-                        update.result <-update_alpha.lasso(X,Y,Z,alpha.old = alpha.old,sigma.square = sigma.square,theta = theta,maxstep_inner = maxstep_inner,tol.inner = tol.inner)
-                        alpha.new <- update.result$alpha.est
-
-                        # Check convergence
-                        if(sum(abs(alpha.new - alpha.old)) < margin ){
-                                cat(red$bold("Done!\n"))
-                                break
-                        }
-                        alpha.old <- alpha.new
-
-                        # Track iteration progress
-                        if (verbosity == 1){
-                                cat(blue$italic("#-----------------"),magenta("Iteration",k,"Done"),blue$italic("-----------------#\n"),sep = "")
-                        }
-                        k <- k+1
-                }
-                tauEst = exp(Z%*%alpha.old)
-                pen_vec= tauEst*sigma.square/n
-                C= sum(pen_vec)/p
-                cus.coef = coef(glmnet(X,Y,alpha = 1, lambda = C, penalty.factor = pen_vec))
+        ### Check method
+        if (! method %in% c("lasso","ridge")) {
+                warning("method not lasso or ridge; set to lasso")
+                method = "lasso"
         }
-        return(list(cus.coef = cus.coef,alpha.hat = alpha.old,n_iter = k-1,sigma.square = sigma.square,likelihood.score = likelihood.score))
+
+        ### Check Z
+        #### If no Z provided, then provide Z of a single column of 1
+        if (missing(Z)) {
+                cat("No Z matrix provided, only a single tuning parameter will be estimated using empirical Bayes tuning")
+                dat_ext = as.matrix(rep(1,nvar))
+        }
+
+        #### If Z is provided:
+        dimZ = dim(Z)
+        nrowZ = ifelse(is.null(dimZ), length(Z), dimZ[1])
+        ncolZ = ifelse(is.null(dimZ), 1, dimZ[2])
+
+        if (nrowZ != nvar){ ## check the dimension of Z
+                stop(paste("number of rows in Z (", nrow(Z),
+                           ") not equal to the number of columns in X (", nvar,
+                           ")", sep = ""))
+        } else if (!is.matrix(Z)) { ## check is Z is a matrix
+                Z = as.matrix(Z)
+        } else if (all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)){ ## check if all rows in Z are the same
+                warning("All rows in Z are the same, this Z matrix is not useful, EB tuning will be performed to estimate
+                        a single tuning parameter")
+                dat_ext = as.matrix(rep(1,nvar))
+        } else if (! all.equal(Z[,1],rep(1,nvar))) { ## if no column of one is appended then append a column of 1s
+                dat_ext = cbind(rep(1,nvar),Z)
+        } else{
+                dat_ext = Z
+        }
+
+        nex = ncol(dat_ext)
+
+        ### Check alpha initial values
+        if (missing(alpha.init) | all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)) {
+                alpha.init = rep(0, nex)
+        } else if (length(alpha.init) != ncol(Z)){
+                warning(cat(paste("number of elements in alpha initial values (", length(alpha.init),
+                           ") not equal to the number of columns of Z (", q,
+                           ")",", alpha initial set to be all 0",sep = "")))
+        } else if (length(alpha.init) == ncol(Z) & ncol(Z) == nex -1 ){
+                alpha.init = c(1,alpha.init)
+        } else{
+                alpha.init = alpha.init
+        }
+
+        ### core function
+        if (nex > 1){
+                cat("Z provided, start estimating individual tuning parameters")
+        }
+
+        fit <- ipreg.fit(X,Y,dat_ext,method = method,
+                            sigma.square = sigma.square,
+                            alpha.init = alpha.init,
+                            maxstep = maxstep,
+                            margin = margin,
+                            maxstep_inner = maxstep_inner,
+                            tol.inner = tol.inner,
+                            compute.likelihood = compute.likelihood,
+                            verbosity = verbosity)
+
+        return(list(coefest = fit$coefest, tuningvector = fit$tuningvector,
+                    alpha.hat = fit$alpha.hat,n_iter = fit$n_iter,
+                    sigma.square = sigma.square,likelihood.score = fit$likelihood.score))
 }

@@ -90,3 +90,8 @@ approx_likelihood.ridge <- function(to_estimate,X,Y,Z,sigma.square.est) {
         normapprox = 1/2 * (part1 + logdetK)
         return(as.numeric(normapprox))
 }
+
+get_mse <- function(estimation, true) {
+        return(mean((as.vector(estimation) - as.vector(true))^2))
+}
+

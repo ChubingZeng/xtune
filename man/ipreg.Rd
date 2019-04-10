@@ -4,10 +4,9 @@
 \alias{ipreg}
 \title{L1 and L2 penalized regression with individual amount of shrinkage for each regression coefficient based on external information.}
 \usage{
-ipreg(X, Y, Z, method = "Lasso", sigma.square = estimateVariance(X, Y),
-  alpha.init = rep(0, ncol(Z)), maxstep = 100, margin = 0.001,
-  maxstep_inner = 50, tol.inner = 0.1, compute.likelihood = FALSE,
-  verbosity = 1)
+ipreg(X, Y, Z, method = c("lasso", "ridge"), sigma.square, alpha.init,
+  maxstep = 100, margin = 0.001, maxstep_inner = 50, tol.inner = 0.01,
+  compute.likelihood = FALSE, verbosity = 0)
 }
 \arguments{
 \item{X}{predictor matrix of dimension \eqn{n*q} used for previous regression}
