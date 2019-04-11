@@ -28,6 +28,8 @@ ipreg <- function(X,Y,Z,method = c("lasso","ridge"),sigma.square,
 
         method = match.arg(method)
 
+        this.call = match.call()
+
         ## checking user inputs
         ### Check X
         np = dim(X)
@@ -44,6 +46,7 @@ ipreg <- function(X,Y,Z,method = c("lasso","ridge"),sigma.square,
 
         ### Check sigma.square
         if (missing(sigma.square)){
+                cat("Estimating sigma square")
                 sigma.square = estimateVariance(X,Y)
         } else if (! is.double(sigma.square)){
                 stop("sigma square is not a number")
@@ -59,43 +62,41 @@ ipreg <- function(X,Y,Z,method = c("lasso","ridge"),sigma.square,
 
         ### Check Z
         #### If no Z provided, then provide Z of a single column of 1
-        if (missing(Z)) {
+        if (missing(Z)){
                 cat("No Z matrix provided, only a single tuning parameter will be estimated using empirical Bayes tuning")
                 dat_ext = as.matrix(rep(1,nvar))
-        }
+        } else {
+                #### If Z is provided:
+                dimZ = dim(Z)
+                nrowZ = ifelse(is.null(dimZ), length(Z), dimZ[1])
+                ncolZ = ifelse(is.null(dimZ), 1, dimZ[2])
 
-        #### If Z is provided:
-        dimZ = dim(Z)
-        nrowZ = ifelse(is.null(dimZ), length(Z), dimZ[1])
-        ncolZ = ifelse(is.null(dimZ), 1, dimZ[2])
-
-        if (nrowZ != nvar){ ## check the dimension of Z
-                stop(paste("number of rows in Z (", nrow(Z),
-                           ") not equal to the number of columns in X (", nvar,
-                           ")", sep = ""))
-        } else if (!is.matrix(Z)) { ## check is Z is a matrix
-                Z = as.matrix(Z)
-        } else if (all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)){ ## check if all rows in Z are the same
-                warning("All rows in Z are the same, this Z matrix is not useful, EB tuning will be performed to estimate
-                        a single tuning parameter")
-                dat_ext = as.matrix(rep(1,nvar))
-        } else if (! all.equal(Z[,1],rep(1,nvar))) { ## if no column of one is appended then append a column of 1s
-                dat_ext = cbind(rep(1,nvar),Z)
-        } else{
-                dat_ext = Z
+                if (nrowZ != nvar){ ## check the dimension of Z
+                        stop(paste("number of rows in Z (", nrow(Z),
+                                   ") not equal to the number of columns in X (", nvar,
+                                   ")", sep = ""))
+                } else if (!is.matrix(Z)) { ## check is Z is a matrix
+                        Z = as.matrix(Z)
+                } else if (all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)){ ## check if all rows in Z are the same
+                        warning("All rows in Z are the same, this Z matrix is not useful, EB tuning will be performed to estimate
+                                a single tuning parameter")
+                        dat_ext = as.matrix(rep(1,nvar))
+                } else if (! identical(Z[,1],rep(1,nvar))) { ## if no column of one is appended then append a column of 1s
+                        dat_ext = cbind(1,Z)
+                } else{
+                        dat_ext = Z
+                }
         }
 
         nex = ncol(dat_ext)
 
         ### Check alpha initial values
-        if (missing(alpha.init) | all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)) {
+        if (missing(alpha.init) | all(apply(dat_ext, 2, function(x) length(unique(x)) == 1) == TRUE)) {
                 alpha.init = rep(0, nex)
-        } else if (length(alpha.init) != ncol(Z)){
+        } else if (length(alpha.init) != ncol(dat_ext)){
                 warning(cat(paste("number of elements in alpha initial values (", length(alpha.init),
                            ") not equal to the number of columns of Z (", q,
                            ")",", alpha initial set to be all 0",sep = "")))
-        } else if (length(alpha.init) == ncol(Z) & ncol(Z) == nex -1 ){
-                alpha.init = c(1,alpha.init)
         } else{
                 alpha.init = alpha.init
         }
