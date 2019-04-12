@@ -26,9 +26,9 @@ ipreg <- function(X,Y,Z,method = c("lasso","ridge"),sigma.square,
                    compute.likelihood = FALSE,
                    verbosity = 0){
 
-        method = match.arg(method)
+        #method = match.arg(method)
 
-        this.call = match.call()
+        #this.call = match.call()
 
         ## checking user inputs
         ### Check X
@@ -50,13 +50,20 @@ ipreg <- function(X,Y,Z,method = c("lasso","ridge"),sigma.square,
                 sigma.square = estimateVariance(X,Y)
         } else if (! is.double(sigma.square)){
                 stop("sigma square is not a number")
-        } else{
+        } else if (is.infinite(sigma.square)){
+                message("sigma square is infinite, estimated sigma square will be used")
+                sigma.square = estimateVariance(X,Y)
+        } else if (sigma.square <= 0){
+                message("sigma square is not positive, estimated sigma square will be used")
+                sigma.square = estimateVariance(X,Y)
+        }
+        else{
                 sigma.square = sigma.square
         }
 
         ### Check method
         if (! method %in% c("lasso","ridge")) {
-                warning("method not lasso or ridge; set to lasso")
+                warning("Method not lasso or ridge; set to lasso")
                 method = "lasso"
         }
 
