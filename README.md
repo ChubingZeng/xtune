@@ -1,4 +1,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# paletteer <img src="man/figures/logo.png" align="right" />
+
 &#x1F49B;&#x1F49C; classo: *L*<sub>1</sub> and *L*<sub>2</sub> penalized regression with differential penalties &#x1F49A;&#x1F499;
 ==================================================================================
 [![Build Status](https://travis-ci.org/ChubingZeng/classo.svg?branch=master)](https://travis-ci.org/ChubingZeng/classo)
