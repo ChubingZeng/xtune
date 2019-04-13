@@ -1,13 +1,6 @@
 #' @import glmnet
 #' @importFrom stats optim
-ipreg.fit <- function(X,Y,Z,method = "lasso",sigma.square = estimateVariance(X,Y),
-                  alpha.init = rep(0,ncol(Z)),
-                  maxstep = 100,
-                  margin = 0.001,
-                  maxstep_inner = 50,
-                  tol.inner = 0.01,
-                  compute.likelihood = FALSE,
-                  verbosity = 0){
+ipreg.fit <- function(X,Y,Z,sigma.square,method,alpha.init,maxstep,tolerance,maxstep_inner,tolerance_inner,compute.likelihood,verbosity){
 
         n = nrow(X);p=ncol(X);q = ncol(Z)
 
@@ -28,11 +21,11 @@ ipreg.fit <- function(X,Y,Z,method = "lasso",sigma.square = estimateVariance(X,Y
                         }
 
                         # Given theta, update alpha
-                        update.result <-update_alpha.lasso(X,Y,Z,alpha.old = alpha.old,sigma.square = sigma.square,theta = theta,maxstep_inner = maxstep_inner,tol.inner = tol.inner)
+                        update.result <-update_alpha.lasso(X,Y,Z,alpha.old = alpha.old,sigma.square = sigma.square,theta = theta,maxstep_inner = maxstep_inner,tolerance_inner = tolerance_inner)
                         alpha.new <- update.result$alpha.est
 
                         # Check convergence
-                        if(sum(abs(alpha.new - alpha.old)) < margin ){
+                        if(sum(abs(alpha.new - alpha.old)) < tolerance ){
                                 cat("Done!\n")
                                 break
                         }
@@ -66,11 +59,11 @@ ipreg.fit <- function(X,Y,Z,method = "lasso",sigma.square = estimateVariance(X,Y
                         }
 
                         # Given theta, update alpha
-                        update.result <-update_alpha.ridge(X,Y,Z,alpha.old = alpha.old,sigma.square = sigma.square,theta = theta,maxstep_inner = maxstep_inner,tol.inner = tol.inner)
+                        update.result <-update_alpha.ridge(X,Y,Z,alpha.old = alpha.old,sigma.square = sigma.square,theta = theta,maxstep_inner = maxstep_inner,tolerance_inner = tolerance_inner)
                         alpha.new <- update.result$alpha.est
 
                         # Check convergence
-                        if(sum(abs(alpha.new - alpha.old)) < margin ){
+                        if(sum(abs(alpha.new - alpha.old)) < tolerance ){
                                 cat(("Done!\n"))
                                 break
                         }

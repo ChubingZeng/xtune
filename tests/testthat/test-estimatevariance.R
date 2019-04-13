@@ -1,4 +1,4 @@
-context("test-estimatevariance")
+context("test estimate variance")
 set.seed(1234)
 
 test_that("estimateVariance works as intended", {

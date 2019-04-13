@@ -17,59 +17,51 @@
 #' @importFrom stats optim
 #' @export
 
-ipreg <- function(X,Y,Z,method = c("lasso","ridge"),sigma.square,
-                   alpha.init,
-                   maxstep = 100,
-                   margin = 0.001,
-                   maxstep_inner = 50,
-                   tol.inner = 0.01,
-                   compute.likelihood = FALSE,
-                   verbosity = 0){
+ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
+                  control = list()){
 
-        #method = match.arg(method)
+        # function call
+        this.call <- match.call()
 
-        #this.call = match.call()
+        # check error distribution for y
+        method = match.arg(method)
 
-        ## checking user inputs
-        ### Check X
+        # check user inputs
+        ## Check X, X need to be a matrix or data.frame
         np = dim(X)
         if (is.null(np) | (np[2] <= 1))
-                stop("x should be a matrix with 2 or more columns")
+                stop("X must be a matrix with 2 or more columns")
+
         nobs = as.integer(np[1]); nvar = as.integer(np[2])
 
-        ### Check Y
+        ## Check Y
+        Y <- as.double(drop(Y))
         dimY = dim(Y)
         nrowY = ifelse(is.null(dimY), length(Y), dimY[1])
         if (nrowY != nobs)
                 stop(paste("number of observations in Y (", nrowY, ") not equal to the number of rows of X (",
                            nobs, ")", sep = ""))
 
-        ### Check sigma.square
-        if (missing(sigma.square)){
+        ## Check sigma.square
+        if (is.null(sigma.square)){
                 cat("Estimating sigma square")
                 sigma.square = estimateVariance(X,Y)
-        } else if (! is.double(sigma.square)){
-                stop("sigma square is not a number")
-        } else if (is.infinite(sigma.square)){
-                message("sigma square is infinite, estimated sigma square will be used")
-                sigma.square = estimateVariance(X,Y)
-        } else if (sigma.square <= 0){
-                message("sigma square is not positive, estimated sigma square will be used")
-                sigma.square = estimateVariance(X,Y)
+        } else if (! is.double(sigma.square) | is.infinite(sigma.square) | sigma.square <= 0){
+                stop("sigma square should be a positive finite number")
         }
         else{
                 sigma.square = sigma.square
         }
 
-        ### Check method
+        # Check method
         if (! method %in% c("lasso","ridge")) {
                 warning("Method not lasso or ridge; set to lasso")
                 method = "lasso"
         }
 
-        ### Check Z
+        # Check Z
         #### If no Z provided, then provide Z of a single column of 1
-        if (missing(Z)){
+        if (is.null(Z)){
                 cat("No Z matrix provided, only a single tuning parameter will be estimated using empirical Bayes tuning")
                 dat_ext = as.matrix(rep(1,nvar))
         } else {
@@ -84,6 +76,8 @@ ipreg <- function(X,Y,Z,method = c("lasso","ridge"),sigma.square,
                                    ")", sep = ""))
                 } else if (!is.matrix(Z)) { ## check is Z is a matrix
                         Z = as.matrix(Z)
+                } else if (!(typeof(Z) %in% c("double", "integer"))) {
+                        stop("Error: external contains non-numeric values")
                 } else if (all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)){ ## check if all rows in Z are the same
                         warning("All rows in Z are the same, this Z matrix is not useful, EB tuning will be performed to estimate
                                 a single tuning parameter")
@@ -97,33 +91,89 @@ ipreg <- function(X,Y,Z,method = c("lasso","ridge"),sigma.square,
 
         nex = ncol(dat_ext)
 
-        ### Check alpha initial values
-        if (missing(alpha.init) | all(apply(dat_ext, 2, function(x) length(unique(x)) == 1) == TRUE)) {
-                alpha.init = rep(0, nex)
-        } else if (length(alpha.init) != ncol(dat_ext)){
-                warning(cat(paste("number of elements in alpha initial values (", length(alpha.init),
-                           ") not equal to the number of columns of Z (", q,
-                           ")",", alpha initial set to be all 0",sep = "")))
-        } else{
-                alpha.init = alpha.init
-        }
+        # check control object
+        control <- do.call("ipreg.control", control)
+        control <- initialize_control(control,dat_ext)
 
-        ### core function
         if (nex > 1){
                 cat("Z provided, start estimating individual tuning parameters")
         }
 
-        fit <- ipreg.fit(X,Y,dat_ext,method = method,
-                            sigma.square = sigma.square,
-                            alpha.init = alpha.init,
+        # core function
+        fit <- ipreg.fit(X = X,
+                         Y = Y,
+                         Z = dat_ext,
+                         method = method,
+                         sigma.square = sigma.square,
+                         alpha.init = control$alpha.init,
+                         maxstep = control$maxstep,
+                         tolerance = control$tolerance,
+                         maxstep_inner = control$maxstep_inner,
+                         tolerance_inner = control$tolerance_inner,
+                         compute.likelihood = control$compute.likelihood,
+                         verbosity = control$verbosity)
+
+        # Check status of model fit
+        if (length(fit$tuningvector) == 1){
+                fit$tuningvector = unique(fit$tuningvector)
+        }
+
+        fit$call <- this.call
+        return(fit)
+}
+
+ipreg.control <- function(alpha.init = NULL,
+                          maxstep = 100,
+                          tolerance = 0.001,
+                          maxstep_inner = 50,
+                          tolerance_inner = 0.1,
+                          compute.likelihood = TRUE,
+                          verbosity = FALSE) {
+
+        if (maxstep < 0) {
+                stop("Error: max out loop step must be a postive integer")
+        }
+
+        if (tolerance < 0) {
+                stop("Error: outer loop tolerance must be greater than 0")
+        }
+
+        if (maxstep_inner < 0) {
+                stop("Error: max out loop step must be a postive integer")
+        }
+
+        if (tolerance_inner < 0) {
+                stop("Error: outer loop tolerance must be greater than 0")
+        }
+
+        if (!is.logical(compute.likelihood)) {
+                stop("Error: compute.likelihood should be either TRUE or FALSE")
+        }
+
+        if (!is.logical(verbosity)) {
+                stop("Error: verbosity should be either TRUE or FALSE")
+        }
+
+        control_obj <- list(alpha.init = alpha.init,
                             maxstep = maxstep,
-                            margin = margin,
+                            tolerance = tolerance,
                             maxstep_inner = maxstep_inner,
-                            tol.inner = tol.inner,
+                            tolerance_inner = tolerance_inner,
                             compute.likelihood = compute.likelihood,
                             verbosity = verbosity)
-
-        return(list(coefest = fit$coefest, tuningvector = fit$tuningvector,
-                    alpha.hat = fit$alpha.hat,n_iter = fit$n_iter,
-                    sigma.square = sigma.square,likelihood.score = fit$likelihood.score))
 }
+
+initialize_control <- function(control_obj,Z){
+        if (is.null(alpha.init) | all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)) {
+                alpha.init = rep(0, nex)
+        } else if (length(alpha.init) != ncol(Z)){
+                warning(cat(paste("number of elements in alpha initial values (", length(alpha.init),
+                                  ") not equal to the number of columns of Z (", q,
+                                  ")",", alpha initial set to be all 0", sep = "")))
+        } else{
+                alpha.init = alpha.init
+        }
+        control_obj$alpha.init <- alpha.init
+        return(control_obj)
+}
+
