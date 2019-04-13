@@ -2,6 +2,7 @@
 
 export(estimateVariance)
 export(ipreg)
+export(ipreg.control)
 import(glmnet)
 importFrom(selectiveInference,estimateSigma)
 importFrom(stats,coef)

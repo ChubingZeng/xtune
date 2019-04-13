@@ -6,13 +6,7 @@
 #' @param Z external information data matrix of dimension \eqn{p*q}
 #' @param method method = "Lasso" for Lasso regression, method = "Ridge" for Ridge regression
 #' @param sigma.square variance estimation, default is the estimated variance using R package "selectiveinference"
-#' @param alpha.init initial value for alpha, default is rep(1,p)
-#' @param maxstep maximal step of iterations
-#' @param margin stoping creteria for converge
-#' @param maxstep_inner maximum inner loop step
-#' @param tol.inner stopping creteria for inner loop
-#' @param compute.likelihood compute likelihood or not
-#' @param verbosity track update process or not
+#' @param control specifies ipreg control object. See \code{\link{ipreg.control}} for more details.
 #' @import glmnet
 #' @importFrom stats optim
 #' @export
@@ -41,23 +35,6 @@ ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
         if (nrowY != nobs)
                 stop(paste("number of observations in Y (", nrowY, ") not equal to the number of rows of X (",
                            nobs, ")", sep = ""))
-
-        ## Check sigma.square
-        if (is.null(sigma.square)){
-                cat("Estimating sigma square")
-                sigma.square = estimateVariance(X,Y)
-        } else if (! is.double(sigma.square) | is.infinite(sigma.square) | sigma.square <= 0){
-                stop("sigma square should be a positive finite number")
-        }
-        else{
-                sigma.square = sigma.square
-        }
-
-        # Check method
-        if (! method %in% c("lasso","ridge")) {
-                warning("Method not lasso or ridge; set to lasso")
-                method = "lasso"
-        }
 
         # Check Z
         #### If no Z provided, then provide Z of a single column of 1
@@ -91,6 +68,22 @@ ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
 
         nex = ncol(dat_ext)
 
+        ## Check sigma.square
+        if (is.null(sigma.square)){
+                cat("Estimating sigma square")
+                sigma.square = estimateVariance(X,Y)
+        } else if (! is.double(sigma.square) | is.infinite(sigma.square) | sigma.square <= 0){
+                stop("sigma square should be a positive finite number")
+        } else{
+                sigma.square = sigma.square
+        }
+
+        # Check method
+        if (! method %in% c("lasso","ridge")) {
+                warning("Method not lasso or ridge; set to lasso")
+                method = "lasso"
+        }
+
         # check control object
         control <- do.call("ipreg.control", control)
         control <- initialize_control(control,dat_ext)
@@ -121,6 +114,19 @@ ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
         fit$call <- this.call
         return(fit)
 }
+
+#' Control function for ipreg fitting
+#'
+#' @description Control function for \code{\link{ipreg}} fitting.
+#' @param alpha.init initial value for alpha, default is rep(1,p)
+#' @param maxstep maximal step of iterations
+#' @param tolerance stoping creteria for convergence
+#' @param maxstep_inner maximum inner loop step
+#' @param tolerance_inner stopping creteria for inner loop
+#' @param compute.likelihood compute likelihood or not
+#' @param verbosity track update process or not
+#' @export
+
 
 ipreg.control <- function(alpha.init = NULL,
                           maxstep = 100,
@@ -165,7 +171,7 @@ ipreg.control <- function(alpha.init = NULL,
 
 initialize_control <- function(control_obj,Z){
         if (is.null(alpha.init) | all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)) {
-                alpha.init = rep(0, nex)
+                alpha.init = rep(0, ncol(Z))
         } else if (length(alpha.init) != ncol(Z)){
                 warning(cat(paste("number of elements in alpha initial values (", length(alpha.init),
                                   ") not equal to the number of columns of Z (", q,

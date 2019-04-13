@@ -1,30 +1,32 @@
 context("test for user input check")
 
-test_that("throw error when matching family not found", {
-
-        x <- matrix(runif(10), nrow = 5)
-        y <- 1:5
-        external <- matrix(runif(10), nrow = 2)
-        expect_error(xrnet(x, y, external, family = "badfamily"))
+test_that("throw error when method not found", {
+        X <- matrix(runif(100), nrow = 20)
+        Y <- 1:20
+        Z <- matrix(runif(10), nrow = 5)
+        expect_error(ipreg(X,Y,Z, method = "badmethod"))
 })
 
-test_that("throw error when x or ext do not have at least 2 columns", {
-        x <- matrix(runif(10), ncol = 1)
-        y <- 1:10
-        external <- matrix(runif(10), 1)
-        expect_error(xrnet(x, y, external, family = "gaussian"), "Error: x must have at least 2 columns")
+test_that("throw error when X or Z do not have at least 2 columns", {
+        X <- matrix(runif(10), ncol = 1)
+        Y <- 1:10
+        Z <- matrix(runif(10), 1)
+        expect_error(ipreg(X,Y,Z,method = "lasso"), "X must be a matrix with 2 or more columns")
 })
 
-test_that("throw error when dimensions of x and y do not match", {
-        x <- matrix(runif(10), ncol = 2)
-        y <- 1:10
-        external <- matrix(runif(10), nrow = 2)
-        expect_error(xrnet(x, y, external, "gaussian"), "Error: Length of y (10) not equal to the number of rows of x (5)", fixed = TRUE)
+test_that("throw error when dimensions of X and Y do not match", {
+        X <- matrix(runif(100), nrow = 20)
+        Y <- 1:10
+        Z <- matrix(runif(10), nrow = 5)
+        expect_error(ipreg(X,Y,Z,method = "lasso"), paste("number of observations in Y (", length(Y), ") not equal to the number of rows of X (",
+                                                         nrow(X), ")", sep = ""),fixed = TRUE)
 })
 
-test_that("throw error when ncol(x) not equal to nrow(external)", {
-        x <- matrix(runif(10), ncol = 2)
-        y <- 1:5
-        external <- matrix(runif(10), nrow = 5)
-        expect_error(xrnet(x, y, external, "gaussian"), "Error: Number of columns in x (2) not equal to the number of rows in external (5)", fixed = TRUE)
+test_that("throw error when ncol(X) not equal to nrow(Z)", {
+        X <- matrix(runif(10), ncol = 2)
+        Y <- 1:5
+        Z <- matrix(runif(10), nrow = 5)
+        expect_error(ipreg(X,Y,Z,method = "lasso"), paste("number of rows in Z (", nrow(Z),
+                                                          ") not equal to the number of columns in X (", ncol(X),
+                                                          ")", sep = ""), fixed = TRUE)
 })

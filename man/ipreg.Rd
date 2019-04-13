@@ -4,9 +4,8 @@
 \alias{ipreg}
 \title{L1 and L2 penalized regression with individual amount of shrinkage for each regression coefficient based on external information.}
 \usage{
-ipreg(X, Y, Z, method = c("lasso", "ridge"), sigma.square, alpha.init,
-  maxstep = 100, margin = 0.001, maxstep_inner = 100, tol.inner = 0.01,
-  compute.likelihood = FALSE, verbosity = 0)
+ipreg(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridge"),
+  control = list())
 }
 \arguments{
 \item{X}{predictor matrix of dimension \eqn{n*q} used for previous regression}
@@ -15,23 +14,11 @@ ipreg(X, Y, Z, method = c("lasso", "ridge"), sigma.square, alpha.init,
 
 \item{Z}{external information data matrix of dimension \eqn{p*q}}
 
-\item{method}{method = "Lasso" for Lasso regression, method = "Ridge" for Ridge regression}
-
 \item{sigma.square}{variance estimation, default is the estimated variance using R package "selectiveinference"}
 
-\item{alpha.init}{initial value for alpha, default is rep(1,p)}
+\item{method}{method = "Lasso" for Lasso regression, method = "Ridge" for Ridge regression}
 
-\item{maxstep}{maximal step of iterations}
-
-\item{margin}{stoping creteria for converge}
-
-\item{maxstep_inner}{maximum inner loop step}
-
-\item{tol.inner}{stopping creteria for inner loop}
-
-\item{compute.likelihood}{compute likelihood or not}
-
-\item{verbosity}{track update process or not}
+\item{control}{specifies ipreg control object. See \code{\link{ipreg.control}} for more details.}
 }
 \description{
 \code{ipreg} estimated beta coefficients and pseudo probablity

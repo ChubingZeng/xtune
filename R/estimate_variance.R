@@ -8,7 +8,13 @@
 #' @export
 
 estimateVariance<-function(X,Y,num = 10) {
-        #options(warn = -1)
+        Y <- as.double(drop(Y))
+        dimY = dim(Y)
+        nrowY = ifelse(is.null(dimY), length(Y), dimY[1])
+        if (nrowY < 10){
+                stop("Need at least 10 observations to estimate variance")
+        }
+
         temp = array(NA,num)
         for (i in 1:num){
                 c = suppressWarnings(estimateSigma(X,Y)$sigmahat^2)
