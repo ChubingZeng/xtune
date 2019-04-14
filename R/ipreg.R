@@ -89,7 +89,7 @@ ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
         control <- initialize_control(control,dat_ext)
 
         if (nex > 1){
-                cat("Z provided, start estimating individual tuning parameters")
+                cat(paste("Z provided, start estimating individual tuning parameters","\n"))
         }
 
         # core function
@@ -169,15 +169,15 @@ ipreg.control <- function(alpha.init = NULL,
                             verbosity = verbosity)
 }
 
-initialize_control <- function(control_obj,Z){
-        if (is.null(alpha.init) | all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)) {
-                alpha.init = rep(0, ncol(Z))
-        } else if (length(alpha.init) != ncol(Z)){
+initialize_control <- function(control_obj,ext){
+        if (is.null(control_obj$alpha.init) | all(apply(ext, 2, function(x) length(unique(x)) == 1) == TRUE)) {
+                alpha.init = rep(0, ncol(ext))
+        } else if (length(control_obj$alpha.init) != ncol(ext)){
                 warning(cat(paste("number of elements in alpha initial values (", length(alpha.init),
-                                  ") not equal to the number of columns of Z (", q,
+                                  ") not equal to the number of columns of ext (", q,
                                   ")",", alpha initial set to be all 0", sep = "")))
         } else{
-                alpha.init = alpha.init
+                alpha.init = control_obj$alpha.init
         }
         control_obj$alpha.init <- alpha.init
         return(control_obj)

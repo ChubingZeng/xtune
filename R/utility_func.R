@@ -92,3 +92,32 @@ approx_likelihood.ridge <- function(to_estimate,X,Y,Z,sigma.square.est) {
 get_mse <- function(estimation, true) {
         return(mean((as.vector(estimation) - as.vector(true))^2))
 }
+
+score_function <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est) {
+        X = input_X
+        Y = input_Y
+        Z = input_Z
+        sigma_square = sigma2_est
+        n = nrow(X)
+        p = ncol(X)
+        gamma = 2/exp(2 * Z %*% to_estimate)
+        Rinv <- backsolve(chol(crossprod(X)/sigma_square + diag(c(1/gamma))), diag(1, p))
+        diagSigma <- rowSums(Rinv^2)
+        mu_vec <- (Rinv %*% (crossprod(Rinv, crossprod(X,Y))))/sigma_square
+        dev_gamma = (gamma - diagSigma - mu_vec^2)/(gamma^2)
+        return(-crossprod(dev_gamma,as.vector(gamma) * Z))
+}
+
+approx_likelihood <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est) {
+        X = input_X
+        Y = input_Y
+        Z = input_Z
+        sigma_s = sigma2_est
+        n = nrow(X)
+        gamma = 2/exp(2 * Z %*% to_estimate)  ## to_estimate:alpha estimates
+        K = sigma_s * diag(n) + X %*% diag(c(gamma)) %*% t(X)
+        logdetK = determinant(K)$modulus[1]
+        part1 = t(Y) %*% solve(K,Y)
+        normapprox = 1/2 * (part1 + logdetK)
+        return(as.numeric(normapprox))
+}
