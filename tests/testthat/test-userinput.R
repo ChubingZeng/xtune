@@ -54,19 +54,4 @@ test_that("throw error when invalid estimated sigma square is provided",{
         expect_error(ipreg(X,Y,Z,sigma.square = -1), paste("sigma square should be a positive finite number"))
 })
 
-test_that("test for predict",{
-        X <- matrix(runif(100), nrow = 20)
-        Y <- 1:20
-        Z <- matrix(runif(10), nrow = 5)
-        newX <- matrix(runif(100), nrow = 10)
-        ipreg_fitted <- ipreg(X,Y,Z)
-        expect_error(predict.ipreg(ipreg_fitted,newX),paste("New X does not have the same number of columns as X train"))
-
-        X <- matrix(runif(100), nrow = 20)
-        Y <- 1:20
-        Z <- matrix(runif(10), nrow = 5)
-        newX <- matrix(runif(100), nrow = 20)
-        ipreg_fitted <- ipreg(X,Y,Z)
-        expect_equal(predict.ipreg(ipreg_fitted,newX),matrix(cbind(1,newX)%*%ipreg_fitted$coefest))
-})
 
