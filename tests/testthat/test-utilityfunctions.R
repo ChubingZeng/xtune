@@ -2,7 +2,7 @@ context("test for each block of utility functions")
 library(numDeriv)
 
 set.seed(1234)
-test_that("gradiant function match with numeric gradient", {
+test_that("gradient function match with numeric gradient", {
         X <- matrix(runif(100), nrow = 20)
         Y <- 1:20
         Z <- matrix(runif(10), nrow = 5)

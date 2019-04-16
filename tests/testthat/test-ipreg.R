@@ -16,8 +16,10 @@ test_that("estimates by empirical bayes tuning and lbfgs direct update match, si
                            sigma2_est = sigma.square.est, rep(0,ncol(Z_int)), invisible = 1,epsilon = 1e-4)
         expect_equal(-ipreg.reweighted$likelihood.score[length(-ipreg.reweighted$likelihood.score)],lbfgs_result$value,tolerance=1e-4)
         expect_equal(mean(sum(lbfgs_result$par-ipreg.reweighted$alpha.hat)^2),0,tolerance=1e-4)
+        expect_length(ipreg.reweighted$tuningvector,1)
 }
 )
+
 
 test_that("estimates by ipreg reweighted-L2 and lbfgs match, multiple tuning parameters", {
         n = 50

@@ -12,7 +12,7 @@ ipreg.fit <- function(X,Y,Z,sigma.square,method,alpha.init,maxstep,tolerance,max
                 while(k < maxstep){
                         # Given alpha, update theta
                         gamma = 2*exp(-2*Z%*%alpha.old) ## variance of beta in the approximated model
-                        Sigma_y=sigma.square * diag(n) +(t(t(X)*c(gamma)))%*%t(X)
+                        Sigma_y = sigma.square * diag(n) + (t(t(X)*c(gamma)))%*%t(X)
                         theta = colSums(X*solve(Sigma_y,X))
 
                         # Compute likelihood
@@ -26,13 +26,12 @@ ipreg.fit <- function(X,Y,Z,sigma.square,method,alpha.init,maxstep,tolerance,max
 
                         # Check convergence
                         if(sum(abs(alpha.new - alpha.old)) < tolerance ){
-                                cat("Done!\n")
                                 break
                         }
                         alpha.old <- alpha.new
 
                         # Track iteration progress
-                        if (verbosity == 1){
+                        if (verbosity == TRUE){
                                 cat("#-----------------Iteration ",k," Done -----------------#\n",sep = "")
                         }
                         k <- k+1
@@ -64,13 +63,12 @@ ipreg.fit <- function(X,Y,Z,sigma.square,method,alpha.init,maxstep,tolerance,max
 
                         # Check convergence
                         if(sum(abs(alpha.new - alpha.old)) < tolerance ){
-                                cat(("Done!\n"))
                                 break
                         }
                         alpha.old <- alpha.new
 
                         # Track iteration progress
-                        if (verbosity == 1){
+                        if (verbosity == TRUE){
                                 cat("#-----------------Iteration ",k," Done -----------------#\n",sep = "")
                         }
                         k <- k+1

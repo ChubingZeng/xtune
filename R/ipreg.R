@@ -54,7 +54,7 @@ ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
                 } else if (!is.matrix(Z)) { ## check is Z is a matrix
                         Z = as.matrix(Z)
                 } else if (!(typeof(Z) %in% c("double", "integer"))) {
-                        stop("Error: external contains non-numeric values")
+                        stop("Error: Z contains non-numeric values")
                 } else if (all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)){ ## check if all rows in Z are the same
                         warning("All rows in Z are the same, this Z matrix is not useful, EB tuning will be performed to estimate
                                 a single tuning parameter")
@@ -70,7 +70,6 @@ ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
 
         ## Check sigma.square
         if (is.null(sigma.square)){
-                cat("Estimating sigma square")
                 sigma.square = estimateVariance(X,Y)
         } else if (! is.double(sigma.square) | is.infinite(sigma.square) | sigma.square <= 0){
                 stop("sigma square should be a positive finite number")
@@ -107,7 +106,7 @@ ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
                          verbosity = control$verbosity)
 
         # Check status of model fit
-        if (length(fit$tuningvector) == 1){
+        if (length(unique(fit$tuningvector)) == 1){
                 fit$tuningvector = unique(fit$tuningvector)
         }
 
