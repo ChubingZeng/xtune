@@ -6,7 +6,7 @@
 \usage{
 ipreg.control(alpha.init = NULL, maxstep = 100, tolerance = 0.001,
   maxstep_inner = 50, tolerance_inner = 0.1, compute.likelihood = TRUE,
-  verbosity = FALSE)
+  verbosity = FALSE, standardize = TRUE, intercept = TRUE)
 }
 \arguments{
 \item{alpha.init}{initial value for alpha, default is rep(1,p)}
@@ -22,6 +22,10 @@ ipreg.control(alpha.init = NULL, maxstep = 100, tolerance = 0.001,
 \item{compute.likelihood}{compute likelihood or not}
 
 \item{verbosity}{track update process or not}
+
+\item{standardize}{standardize X or not, same as the standardize option in glmnet}
+
+\item{intercept}{Should intercept(s) be fitted (default=TRUE) or set to zero (FALSE), same as the intercept option in glmnet}
 }
 \description{
 Control function for \code{\link{ipreg}} fitting.

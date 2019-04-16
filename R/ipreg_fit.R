@@ -1,6 +1,6 @@
 #' @import glmnet
 #' @importFrom stats optim
-ipreg.fit <- function(X,Y,Z,sigma.square,method,alpha.init,maxstep,tolerance,maxstep_inner,tolerance_inner,compute.likelihood,verbosity){
+ipreg.fit <- function(X,Y,Z,sigma.square,method,alpha.init,maxstep,tolerance,maxstep_inner,tolerance_inner,compute.likelihood,verbosity,standardize = standardize, intercept = intercept){
 
         n = nrow(X);p=ncol(X);q = ncol(Z)
 
@@ -39,7 +39,7 @@ ipreg.fit <- function(X,Y,Z,sigma.square,method,alpha.init,maxstep,tolerance,max
                 tauEst = exp(Z%*%alpha.old)
                 pen_vec= tauEst*sigma.square/n
                 C= sum(pen_vec)/p
-                cus.coef = coef(glmnet(X,Y,alpha = 1, lambda = C, penalty.factor = pen_vec))
+                cus.coef = coef(glmnet(X,Y,alpha = 1, lambda = C, penalty.factor = pen_vec,standardize = standardize, intercept = intercept))
         }
         if (method== "ridge") { ##---------- ridge regression
                 ## Initialize
@@ -76,7 +76,7 @@ ipreg.fit <- function(X,Y,Z,sigma.square,method,alpha.init,maxstep,tolerance,max
                 gamma = exp(-Z%*%alpha.old)
                 pen_vec = 1/gamma*sigma.square/n
                 C = sum(pen_vec)/p
-                cus.coef <- coef(glmnet(X,Y,alpha = 0, lambda = C, penalty.factor = pen_vec))
+                cus.coef <- coef(glmnet(X,Y,alpha = 0, lambda = C, penalty.factor = pen_vec,standardize = standardize, intercept = intercept))
                 }
         return(list(coefest = cus.coef,alpha.hat = alpha.old, tuningvector = pen_vec, n_iter = k-1,sigma.square = sigma.square,likelihood.score = likelihood.score))
 }

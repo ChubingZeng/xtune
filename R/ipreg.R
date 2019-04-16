@@ -103,7 +103,9 @@ ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
                          maxstep_inner = control$maxstep_inner,
                          tolerance_inner = control$tolerance_inner,
                          compute.likelihood = control$compute.likelihood,
-                         verbosity = control$verbosity)
+                         verbosity = control$verbosity,
+                         standardize = control$standardize,
+                         intercept = control$intercept)
 
         # Check status of model fit
         if (length(unique(fit$tuningvector)) == 1){
@@ -124,6 +126,8 @@ ipreg <- function(X,Y,Z = NULL,sigma.square = NULL,method = c("lasso","ridge"),
 #' @param tolerance_inner stopping creteria for inner loop
 #' @param compute.likelihood compute likelihood or not
 #' @param verbosity track update process or not
+#' @param standardize standardize X or not, same as the standardize option in glmnet
+#' @param intercept Should intercept(s) be fitted (default=TRUE) or set to zero (FALSE), same as the intercept option in glmnet
 #' @export
 
 
@@ -133,7 +137,9 @@ ipreg.control <- function(alpha.init = NULL,
                           maxstep_inner = 50,
                           tolerance_inner = 0.1,
                           compute.likelihood = TRUE,
-                          verbosity = FALSE) {
+                          verbosity = FALSE,
+                          standardize = TRUE,
+                          intercept = TRUE) {
 
         if (maxstep < 0) {
                 stop("Error: max out loop step must be a postive integer")
@@ -165,7 +171,9 @@ ipreg.control <- function(alpha.init = NULL,
                             maxstep_inner = maxstep_inner,
                             tolerance_inner = tolerance_inner,
                             compute.likelihood = compute.likelihood,
-                            verbosity = verbosity)
+                            verbosity = verbosity,
+                            standardize = standardize,
+                            intercept = intercept)
 }
 
 initialize_control <- function(control_obj,ext){

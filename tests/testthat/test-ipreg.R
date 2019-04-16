@@ -53,3 +53,4 @@ test_that("update lasso and update ridge are equivalent for alpha estimate", {
         expect_equal(mean(sum(log(2) - 2*cbind(1,Z)%*%out.lasso$alpha.hat + cbind(1,Z)%*%out.ridge$alpha.hat)^2),0,tolerance = 1e-4)
 }
 )
+
