@@ -7,7 +7,9 @@
 #' @export
 
 predict.ipreg <- function(object, newX,...){
-        if (length(object$coefest[-1]) != ncol(newX)){
+        if (!(typeof(newX) %in% c("double", "integer"))) {
+                stop("New X contains non-numeric values")
+        } else if (length(object$coefest[-1]) != ncol(newX)){
                 stop("New X does not have the same number of columns as X train")
         }
         predicted <- object$coefest[1] + newX %*% object$coefest[-1]
