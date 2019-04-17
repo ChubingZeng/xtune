@@ -1,4 +1,4 @@
 library(testthat)
-library(classo)
+library(ipreg)
 
-test_check("classo")
+test_check("ipreg")

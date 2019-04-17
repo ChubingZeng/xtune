@@ -15,8 +15,7 @@ test_that("estimates by empirical bayes tuning and lbfgs direct update match, si
         lbfgs_result=lbfgs(approx_likelihood, score_function, input_X = X, input_Y = Y, input_Z = Z_int,
                            sigma2_est = sigma.square.est, rep(0,ncol(Z_int)), invisible = 1,epsilon = 1e-4)
         expect_equal(-ipreg.reweighted$likelihood.score[length(-ipreg.reweighted$likelihood.score)],lbfgs_result$value,tolerance=1e-4)
-        expect_equal(mean(sum(lbfgs_result$par-ipreg.reweighted$alpha.hat)^2),0,tolerance=1e-4)
-        expect_length(ipreg.reweighted$tuningvector,1)
+        expect_equal(mean(sum(lbfgs_result$par-ipreg.reweighted$alpha.est)^2),0,tolerance=1e-4)
 }
 )
 
@@ -35,7 +34,8 @@ test_that("estimates by ipreg reweighted-L2 and lbfgs match, multiple tuning par
         lbfgs_result=lbfgs(approx_likelihood, score_function, input_X = X, input_Y = Y, input_Z = Z_int,
                            sigma2_est = sigma.square.est, rep(0,ncol(Z_int)), invisible = 1,epsilon = 1e-4)
         expect_equal(-ipreg.reweighted$likelihood.score[length(-ipreg.reweighted$likelihood.score)],lbfgs_result$value,tolerance=1e-4)
-        expect_equal(mean(sum(lbfgs_result$par-ipreg.reweighted$alpha.hat)^2),0,tolerance=1e-4)
+        expect_equal(mean(sum(lbfgs_result$par-ipreg.reweighted$alpha.est)^2),0,tolerance=1e-4)
+        expect_length(ipreg.reweighted$penalty.vector,ncol(X))
         }
 )
 
@@ -50,7 +50,7 @@ test_that("update lasso and update ridge are equivalent for alpha estimate", {
         sigma.square.est = estimateVariance(X,Y)
         out.lasso=ipreg(X,Y,Z,sigma.square = sigma.square.est,method = "lasso",control = list(tolerance = 1e-4,tolerance_inner=1e-4))
         out.ridge=ipreg(X,Y,Z,sigma.square = sigma.square.est,method = "ridge",control = list(tolerance = 1e-4,tolerance_inner=1e-4))
-        expect_equal(mean(sum(log(2) - 2*cbind(1,Z)%*%out.lasso$alpha.hat + cbind(1,Z)%*%out.ridge$alpha.hat)^2),0,tolerance = 1e-4)
+        expect_equal(mean(sum(log(2) - 2*cbind(1,Z)%*%out.lasso$alpha.est + cbind(1,Z)%*%out.ridge$alpha.est)^2),0,tolerance = 1e-4)
 }
 )
 

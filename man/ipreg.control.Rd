@@ -9,21 +9,23 @@ ipreg.control(alpha.init = NULL, maxstep = 100, tolerance = 0.001,
   verbosity = FALSE, standardize = TRUE, intercept = TRUE)
 }
 \arguments{
-\item{alpha.init}{initial value for alpha, default is rep(1,p)}
+\item{alpha.init}{initial values of alpha vector supplied to the algorithm.
+alpha values are the hyper-parameters for the double exponential prior of regression coefficients,
+ and it controls the prior variance of regression coefficients. Default is a vector of 0 with length p.}
 
-\item{maxstep}{maximal step of iterations}
+\item{maxstep}{Maximum number of iterations. Default is 100.}
 
-\item{tolerance}{stoping creteria for convergence}
+\item{tolerance}{Convergence threshhold. Default is 1e-4.}
 
-\item{maxstep_inner}{maximum inner loop step}
+\item{maxstep_inner}{Maximum number of iterations for the inner loop of the majorization minimization algorithm.}
 
-\item{tolerance_inner}{stopping creteria for inner loop}
+\item{tolerance_inner}{Convergence threshhold for the inner loop of the majorization minimization algorithm.}
 
-\item{compute.likelihood}{compute likelihood or not}
+\item{compute.likelihood}{Should the function compute the marginal likelihood for hyper-parameters at each step of update? Default is TRUE.}
 
-\item{verbosity}{track update process or not}
+\item{verbosity}{Track algorithm update process? Default is FALSE.}
 
-\item{standardize}{standardize X or not, same as the standardize option in glmnet}
+\item{standardize}{Standardize X or not, same as the standardize option in glmnet}
 
 \item{intercept}{Should intercept(s) be fitted (default=TRUE) or set to zero (FALSE), same as the intercept option in glmnet}
 }

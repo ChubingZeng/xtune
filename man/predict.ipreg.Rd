@@ -7,7 +7,7 @@
 \method{predict}{ipreg}(object, newX, ...)
 }
 \arguments{
-\item{object}{Fitted "ipreg" model object.}
+\item{object}{Fitted 'ipreg' model object.}
 
 \item{newX}{Matrix of values at which predictions are to be made.}
 
