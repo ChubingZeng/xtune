@@ -2,17 +2,40 @@
 % Please edit documentation in R/estimate_variance.R
 \name{estimateVariance}
 \alias{estimateVariance}
-\title{Estimate Variance given predictor X and response Y.}
+\title{Estimate noise variance given predictor X and response Y.}
 \usage{
-estimateVariance(X, Y, num = 10)
+estimateVariance(X, Y, n_rep = 10)
 }
 \arguments{
-\item{X}{predictor matrix of dimension \eqn{n*q} used for previous regression}
+\item{X}{predictor matrix of dimension \eqn{n} by \eqn{p}.}
 
-\item{Y}{continuous outcome vector of dimension \eqn{n} used for previous regression}
+\item{Y}{continuous outcome vector of length \eqn{n}.}
 
-\item{num}{number of repeated estimation}
+\item{n_rep}{number of repeated estimation. Default is 10.}
 }
 \description{
-\code{estimateVariance} estimate noise variance
+\code{estimateVariance} estimate noise variance.
+}
+\details{
+The \code{estimateSigma} function from \link{selectiveInference} is used repeatedly to estimate noise variance.
+}
+\examples{
+## simulate some data
+set.seed(9)
+n = 30
+p = 10
+sigma.square = 1
+X = matrix(rnorm(n*p),n,p)
+beta = c(2,-2,1,-1,rep(0,p-4))
+Y = X\%*\%beta + rnorm(n,0,sqrt(sigma.square))
+
+## estimate sigma square
+sigma.square.est = estimateVariance(X,Y)
+sigma.square.est
+}
+\references{
+Stephen Reid, Jerome Friedman, and Rob Tibshirani (2014). A study of error variance estimation in lasso regression. arXiv:1311.5274.
+}
+\seealso{
+\link{selectiveInference}
 }

@@ -49,6 +49,30 @@ Please note that the number of rows in Z should match with the number of columns
 
 A majorization-minimization procedure is employed to fit \code{ipreg}.
 }
+\examples{
+## simulate data
+set.seed(9)
+n = 50
+p = 200
+sigma.square = 1
+X = matrix(rnorm(n*p),n,p)
+beta = c(2,-2,1,-1,0.5,-0.5,rep(0,p-6))
+Z = matrix(0,ncol= 3,nrow = p); Z[1:2,1] <- 1; Z[3:4,2] <- 1; Z[5:6,3] <- 1
+Y = X\%*\%beta + rnorm(n,0,sqrt(sigma.square))
+
+## Empirical Bayes tuning to estimate tuning parameter, as an alternative to cross-validation:
+fit.eb <- ipreg(X,Y)
+fit.eb$lambda
+
+### compare with tuning parameter choosen by cross-validation, using glmnet
+fit.cv <- cv.glmnet(X,Y,alpha = 1)
+fit.cv$lambda.min
+
+## Differential shrinkage based on external information Z:
+fit.diff <- ipreg(X,Y,Z)
+fit.diff$penalty.vector
+
+}
 \seealso{
 \link{predict.ipreg}, as well as \link{glmnet}.
 }

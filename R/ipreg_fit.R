@@ -48,9 +48,8 @@ ipreg.fit <- function(X, Y, Z, sigma.square, method, alpha.init, maxstep, tolera
                 tauEst = exp(Z %*% alpha.old)
                 pen_vec = tauEst * sigma.square/n
 
-                threshold <- 1e3
-                pen_vec[pen_vec > threshold] <- Inf
-                C = mean(pen_vec[pen_vec!=Inf])
+                pen_vec[pen_vec > 1e3] <- Inf
+                C = ifelse(is.nan(mean(pen_vec[pen_vec!=Inf])),1e5,mean(pen_vec[pen_vec!=Inf]))
 
                 cus.coef = coef(glmnet(X, Y, alpha = 1, lambda = C, penalty.factor = pen_vec,
                                        standardize = standardize, intercept = intercept))
@@ -94,7 +93,11 @@ ipreg.fit <- function(X, Y, Z, sigma.square, method, alpha.init, maxstep, tolera
                 }
                 gamma = exp(-Z %*% alpha.old)
                 pen_vec = 1/gamma * sigma.square/n
-                C = sum(pen_vec)/p
+
+                pen_vec[pen_vec > 1e3] <- Inf
+                C = ifelse(is.nan(mean(pen_vec[pen_vec!=Inf])),1e5,mean(pen_vec[pen_vec!=Inf]))
+
+
                 cus.coef <- coef(glmnet(X, Y, alpha = 0, lambda = C, penalty.factor = pen_vec,
                                         standardize = standardize, intercept = intercept))
         }

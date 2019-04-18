@@ -30,6 +30,29 @@
 #' \item{likelihood.score}{A vector containing the marginal likelihood value of the fitted model at each iteration.}
 #' @author Chubing Zeng
 #' @seealso \link{predict.ipreg}, as well as \link{glmnet}.
+#' @examples
+#' ## simulate data
+#' set.seed(9)
+#' n = 50
+#' p = 200
+#' sigma.square = 1
+#' X = matrix(rnorm(n*p),n,p)
+#' beta = c(2,-2,1,-1,0.5,-0.5,rep(0,p-6))
+#' Z = matrix(0,ncol= 3,nrow = p); Z[1:2,1] <- 1; Z[3:4,2] <- 1; Z[5:6,3] <- 1
+#' Y = X%*%beta + rnorm(n,0,sqrt(sigma.square))
+#'
+#' ## Empirical Bayes tuning to estimate tuning parameter, as an alternative to cross-validation:
+#' fit.eb <- ipreg(X,Y)
+#' fit.eb$lambda
+#'
+#' ### compare with tuning parameter choosen by cross-validation, using glmnet
+#' fit.cv <- cv.glmnet(X,Y,alpha = 1)
+#' fit.cv$lambda.min
+#'
+#' ## Differential shrinkage based on external information Z:
+#' fit.diff <- ipreg(X,Y,Z)
+#' fit.diff$penalty.vector
+#'
 #' @import glmnet
 #' @importFrom stats optim
 #' @export
@@ -62,7 +85,7 @@ ipreg <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
     # Check Z If no Z provided, then provide Z of a single column of 1
     if (is.null(Z)) {
             if (message == TRUE){
-                    cat("No Z matrix provided, only a single tuning parameter will be estimated using empirical Bayes tuning")
+                    cat("No Z matrix provided, only a single tuning parameter will be estimated using empirical Bayes tuning","\n")
             }
         dat_ext = matrix(rep(1, nvar))
     } else {
@@ -83,8 +106,8 @@ ipreg <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
             stop("Z contains non-numeric values")
         } else if (all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)) {
             ## check if all rows in Z are the same
-            warning("All rows in Z are the same, this Z matrix is not useful, EB tuning will be performed to estimate
-                                a single tuning parameter")
+            warning(paste("All rows in Z are the same, this Z matrix is not useful, EB tuning will be performed to estimate
+                                a single tuning parameter","\n"))
             dat_ext = matrix(rep(1, nvar))
         } else {
             dat_ext <- Z
