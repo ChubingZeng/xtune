@@ -1,10 +1,12 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-&#x1F49B;&#x1F49C; ipreg: Penalized regression with differential shrinkage based on prior knowledge &#x1F49A;&#x1F499; <img src="man/figures/logo.png" align="right" />
+:sparkles: ipreg: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
 ==================================================================================
 
 [![Build Status](https://travis-ci.org/ChubingZeng/classo.svg?branch=master)](https://travis-ci.org/ChubingZeng/classo)
 [![Coverage status](https://codecov.io/gh/ChubingZeng/classo/branch/master/graph/badge.svg)](https://codecov.io/github/ChubingZeng/classo?branch=master)
+
+
 
 &#x1F4D7;  Introduction
 ------------
