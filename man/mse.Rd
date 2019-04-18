@@ -7,10 +7,18 @@
 mse(pred, true)
 }
 \arguments{
-\item{pred}{Prediction values}
+\item{pred}{Prediction values vector}
 
-\item{true}{Actual values}
+\item{true}{Actual values vector}
+}
+\value{
+mean square error
 }
 \description{
 \code{mse} calculate mean square error (MSE) between prediction values and true values
+}
+\examples{
+Y1 <- rnorm(10,0,1)
+Y2 <- rnorm(10,0,1)
+mse(Y1,Y2)
 }
