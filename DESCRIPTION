@@ -1,6 +1,6 @@
 Package: ipreg
 Type: Package
-Title: Regularized Regression with Differential Penalties based on External Information
+Title: Regularized Regression with Differential Penalties Integrating External Information
 Version: 0.1.0
 Author: Chubing Zeng
 Maintainer: Chubing Zeng <chubingz@usc.edu>
