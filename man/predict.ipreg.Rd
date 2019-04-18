@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict.R
 \name{predict.ipreg}
 \alias{predict.ipreg}
-\title{Predict model for integrated penalized regression model fit}
+\title{Model predictions based on fitted \code{ipreg} object}
 \usage{
 \method{predict}{ipreg}(object, newX, ...)
 }
@@ -13,6 +13,38 @@
 
 \item{...}{Not used}
 }
+\value{
+A vector of predictions
+}
 \description{
 \code{predict.ipreg} produces predicted values fitting an ipreg model to a new dataset
+}
+\details{
+\code{coef} and \code{predict} methods are provided as a convenience to extract coefficients and make prediction. \code{predict.ipreg} simply calculate the predicted value using the estimated coefficients returned by \code{ipreg}.
+}
+\examples{
+## simulate data
+set.seed(9)
+n = 50
+p = 200
+sigma.square = 1
+X = matrix(rnorm(n*p),n,p)
+beta = c(2,-2,1,-1,0.5,-0.5,rep(0,p-6))
+Z = matrix(0,ncol= 3,nrow = p); Z[1:2,1] <- 1; Z[3:4,2] <- 1; Z[5:6,3] <- 1
+Y = X\%*\%beta + rnorm(n,0,sqrt(sigma.square))
+
+## If no Z provided, perform Empirical Bayes tuning
+fit.eb <- ipreg(X,Y)
+## Coef and predict methods
+coef(fit.eb)
+predict(fit.eb,X)
+
+## Differential shrinkage based on external information Z:
+fit.diff <- ipreg(X,Y,Z)
+## Coef and predict methods
+coef(fit.diff)
+predict(fit.diff,X)
+}
+\seealso{
+\code{ipreg}, \code{coef.ipreg}
 }
