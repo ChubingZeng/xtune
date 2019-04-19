@@ -14,15 +14,24 @@
 Motivation
 ----------
 
-Lasso and Ridge regression are very popular techniques for fitting high dimensional data. In their objective function, they have one global penalty parameter *λ* to control the amount of shrinakge for all predictors, which could potentially undershrinking important features and overshrinking unimportant features.
+Lasso and Ridge regression are very popular techniques for fitting high dimensional data. In their objective function, they have a single penalty parameter *λ* applied equally to all regression coefficients to control the amount of regularization in the model, which could potentially undershrinking important features and overshrinking unimportant features.
 
-The motivation of integrated penalized regression to improve the prediction accuracy of standard Lasso and Ridge regression by allowing **differential amount of shrinkage** for each regression coefficient based on external information. The external information could be any nominal or quantiative feature-specific information, such as grouping of predictors, prior knowledge of biological importance, external p-values, function annotations, etc. 
+The motivation of integrated penalized regression is to improve the prediction accuracy of standard Lasso and Ridge regression by allowing **differential amount of shrinkage** for each regression coefficient by integrating external information. The objective function of integrated penalized regression is: 
 
 ![objective](https://user-images.githubusercontent.com/23446412/55191031-5537b280-515e-11e9-89dd-a991275a4a83.png)
 
-Cross-validation is widely used to tune a single penalty parameter, but it is computationally infeasible to tune more than three penalty parameters. Instead, we propose an Empirical Bayes approach to learn the multiple tuning parameters. The individual penalties are interpreted as variance terms of the priors (double exponential prior for Lasso and Gaussian prior for Ridge) in a random effect formulation of penalized regressions. 
+The external information could be any nominal or quantiative feature-specific information, such as grouping of predictors, prior knowledge of biological importance, external p-values, function annotations, etc. Each column of Z is a variable for features in X. Z is of dimension *p \times q*, where *p* is the number of features and *q* is the number of variables in Z.
 
-Currently, we allow both continuous and binary outcomes. The binary outcome case is based on the extension of linear outcome case using linear discriminat analysis.
+Tuning multiple penalty parameters
+----------------------------------
+
+Cross-validation is widely used to tune a single penalty parameter, but it is computationally infeasible to tune more than three penalty parameters. Therefore, we propose an Empirical Bayes approach to learn the multiple tuning parameters. The individual penalties are interpreted as variance terms of the priors (double exponential prior for Lasso and Gaussian prior for Ridge) in a random effect formulation of penalized regressions. A majorization-minimization algorithm is employed for implementation. 
+
+Data structure examples
+----------------------------------
+
+
+
 
 &#x1F4D9;  Installation
 =======================
