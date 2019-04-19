@@ -46,9 +46,10 @@
 #' fit.eb$lambda
 #'
 #' ### compare with tuning parameter choosen by cross-validation, using glmnet
+#' \dontrun{
 #' fit.cv <- cv.glmnet(X,Y,alpha = 1)
 #' fit.cv$lambda.min
-#'
+#'}
 #' ## Differential shrinkage based on external information Z:
 #' fit.diff <- ipreg(X,Y,Z)
 #' fit.diff$penalty.vector

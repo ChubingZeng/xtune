@@ -3,8 +3,8 @@
 :sparkles: ipreg: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
 ==================================================================================
 
-[![Build Status](https://travis-ci.org/ChubingZeng/classo.svg?branch=master)](https://travis-ci.org/ChubingZeng/classo)
-[![Coverage status](https://codecov.io/gh/ChubingZeng/classo/branch/master/graph/badge.svg)](https://codecov.io/github/ChubingZeng/classo?branch=master)
+[![Build Status](https://travis-ci.org/ChubingZeng/ipreg.svg?branch=master)](https://travis-ci.org/ChubingZeng/ipreg)
+[![Coverage status](https://codecov.io/gh/ChubingZeng/ipreg/branch/master/graph/badge.svg)](https://codecov.io/github/ChubingZeng/ipreg?branch=master)
 
 
 
