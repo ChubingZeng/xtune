@@ -171,8 +171,8 @@ ipreg <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
 #'  and it controls the prior variance of regression coefficients. Default is a vector of 0 with length p.
 #' @param maxstep Maximum number of iterations. Default is 100.
 #' @param tolerance Convergence threshhold. Default is 1e-4.
-#' @param maxstep_inner Maximum number of iterations for the inner loop of the majorization minimization algorithm.
-#' @param tolerance_inner Convergence threshhold for the inner loop of the majorization minimization algorithm.
+#' @param maxstep_inner Maximum number of iterations for the inner loop of the majorization-minimization algorithm.
+#' @param tolerance_inner Convergence threshhold for the inner loop of the majorization-minimization algorithm.
 #' @param compute.likelihood Should the function compute the marginal likelihood for hyper-parameters at each step of update? Default is TRUE.
 #' @param verbosity Track algorithm update process? Default is FALSE.
 #' @param standardize Standardize X or not, same as the standardize option in glmnet

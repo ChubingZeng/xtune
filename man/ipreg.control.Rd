@@ -17,9 +17,9 @@ alpha values are the hyper-parameters for the double exponential prior of regres
 
 \item{tolerance}{Convergence threshhold. Default is 1e-4.}
 
-\item{maxstep_inner}{Maximum number of iterations for the inner loop of the majorization minimization algorithm.}
+\item{maxstep_inner}{Maximum number of iterations for the inner loop of the majorization-minimization algorithm.}
 
-\item{tolerance_inner}{Convergence threshhold for the inner loop of the majorization minimization algorithm.}
+\item{tolerance_inner}{Convergence threshhold for the inner loop of the majorization-minimization algorithm.}
 
 \item{compute.likelihood}{Should the function compute the marginal likelihood for hyper-parameters at each step of update? Default is TRUE.}
 

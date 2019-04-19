@@ -4,11 +4,7 @@ Title: Regularized Regression with Differential Penalties Integrating External I
 Version: 0.1.0
 Author: Chubing Zeng
 Maintainer: Chubing Zeng <chubingz@usc.edu>
-Description: This package has two usages. First, if external information Z 
-  about the predictors X is provided, ipreg extends the standard Lasso and 
-  Ridge regression to allow individual amount of shrinkage for each regression coefficient based on Z. The individual penalties are estimated by optimizing their marginal likelihood 
-  with the majorization-minimization procedure. Second, if no external information Z is provided, ipreg provides
-  an Empirical Bayes way to choose the tuning parameter in Lasso and Ridge regression, as an alternative to cross-validation. 
+Description: This package extends standard penalized regression (Lasso and Ridge) to allow differential shrinkage based on external information with the goal of achieving a better prediction accuracy. Examples of external information include grouping of predictors, prior knowledge of biological importance, external p-values, function annotations, etc. The choice of multiple tuning parameters is done using an Empirical Bayes approach. A majorization-minimization algorithm is employed for implementation. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
