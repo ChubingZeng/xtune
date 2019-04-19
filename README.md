@@ -9,28 +9,23 @@
 
 
 &#x1F4D7;  Introduction
-------------
+=======================
 
-Standard *L*<sub>1</sub> penalized regression (LASSO) and *L*<sub>2</sub> penalized regression (Ridge) have one global penalty parameter *λ* that controls the amount of shrinakge for all predictors, which could potentially undershrinking important features and overshrinking unimportant features.
+Motivation
+----------
 
-The aim of *classo* is to allow **differential amount of shrinkage** for each regression coefficients for *L*<sub>1</sub> and *L*<sub>2</sub> penalized regression. The amount of shrinkage for each predictor is modeled as a function of the prior knowledge *Z* provided into the model.
+Lasso and Ridge regression are very popular techniques for fitting high dimensional data. In their objective function, they have one global penalty parameter *λ* to control the amount of shrinakge for all predictors, which could potentially undershrinking important features and overshrinking unimportant features.
+
+The motivation of integrated penalized regression to improve the prediction accuracy of standard Lasso and Ridge regression by allowing **differential amount of shrinkage** for each regression coefficient based on external information. The external information could be any nominal or quantiative feature-specific information, such as grouping of predictors, prior knowledge of biological importance, external p-values, function annotations, etc. 
 
 ![objective](https://user-images.githubusercontent.com/23446412/55191031-5537b280-515e-11e9-89dd-a991275a4a83.png)
 
-This package has two main functions for now.
-
--   Customized Penalized Regression: *cus_penalized_reg()* 
-
-    Customized Penalized Regression extends standard LASSO to allow differential penalization on for each regression coefficients. 
-
--   Empirical Bayes (EB) tuning: *eb_tuning()* 
-
-    EB tuning is a novel way to find the tuning parameter for LASSO and Ridge regression using an empirical Bayes approach. It can be used as an alternative to cross-validation.
+Cross-validation is widely used to tune a single penalty parameter, but it is computationally infeasible to tune more than three penalty parameters. Instead, we propose an Empirical Bayes approach to learn the multiple tuning parameters. The individual penalties are interpreted as variance terms of the priors (double exponential prior for Lasso and Gaussian prior for Ridge) in a random effect formulation of penalized regressions. 
 
 Currently, we allow both continuous and binary outcomes. The binary outcome case is based on the extension of linear outcome case using linear discriminat analysis.
 
 &#x1F4D9;  Installation
-------------
+=======================
 *classo* can be stored from Github:
 
 ``` r
@@ -43,7 +38,7 @@ library(classo)
 ```
 
 &#x1F4D8;  Examples
--------
+===================
 Here are some basic examples on how to use this package:
 #### LASSO with differential amount of penalties
 ``` r
