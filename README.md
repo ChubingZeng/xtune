@@ -4,7 +4,7 @@
 ==================================================================================
 
 [![Build Status](https://travis-ci.org/ChubingZeng/ipreg.svg?branch=master)](https://travis-ci.org/ChubingZeng/ipreg)
-[![Coverage status](https://codecov.io/gh/ChubingZeng/ipreg/branch/master/graph/badge.svg)](https://codecov.io/github/ChubingZeng/ipreg?branch=master)
+[![Coverage status](https://codecov.io/gh/ChubingZeng/ipreg/branch/master/graph/badge.svg)](https://codecov.io/gh/ChubingZeng/ipreg)
 
 
 
