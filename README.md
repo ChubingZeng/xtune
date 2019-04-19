@@ -28,20 +28,21 @@ Tuning multiple penalty parameters
 Cross-validation is widely used to tune a single penalty parameter, but it is computationally infeasible to tune more than three penalty parameters. Therefore, we propose an Empirical Bayes approach to learn the multiple tuning parameters. The individual penalties are interpreted as variance terms of the priors (double exponential prior for Lasso and Gaussian prior for Ridge) in a random effect formulation of penalized regressions. A majorization-minimization algorithm is employed for implementation. 
 
 Data structure examples
-----------------------------------
+------------------------
+Suppose we want to predict a person's cholesterol level using his/her weekly dietary intake. Our external information Z simply incorporates information about the levels of relevant food constituents in the dietary items.
 
-
+![example 1](https://user-images.githubusercontent.com/23446412/56444955-da227180-62af-11e9-993d-70feb769e910.png)
 
 
 &#x1F4D9;  Installation
 =======================
-*classo* can be stored from Github:
+*ipreg* can be installed from Github:
 
 ``` r
 # install.packages("devtools")
 
 library(devtools)
-devtools::install_github("ChubingZeng/classo")
+devtools::install_github("ChubingZeng/ipreg")
 
 library(classo)
 ```
@@ -49,9 +50,11 @@ library(classo)
 &#x1F4D8;  Examples
 ===================
 Here are some basic examples on how to use this package:
+
+
 #### LASSO with differential amount of penalties
 ``` r
-## basic example code
+
 ```
 #### Ridge with differential amount of penalties
 ``` r
