@@ -10,13 +10,10 @@
 #' @examples
 #' ## simulate data
 #' set.seed(9)
-#' n = 50
-#' p = 200
-#' sigma.square = 1
-#' X = matrix(rnorm(n*p),n,p)
-#' beta = c(2,-2,1,-1,0.5,-0.5,rep(0,p-6))
-#' Z = matrix(0,ncol= 3,nrow = p); Z[1:2,1] <- 1; Z[3:4,2] <- 1; Z[5:6,3] <- 1
-#' Y = X%*%beta + rnorm(n,0,sqrt(sigma.square))
+#' data(example)
+#' X <- example$X
+#' Y <- example$Y
+#' Z <- example$Z
 #'
 #' ## If no Z provided, perform Empirical Bayes tuning
 #' fit.eb <- ipreg(X,Y)
