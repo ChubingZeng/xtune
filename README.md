@@ -1,6 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-:sparkles: ipreg: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
+ipreg: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
 ==================================================================================
 
 [![Build Status](https://travis-ci.org/ChubingZeng/ipreg.svg?branch=master)](https://travis-ci.org/ChubingZeng/ipreg)
