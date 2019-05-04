@@ -1,26 +1,26 @@
 #' Fit penalized regression with differential shrinkage based on external information.
 #'
-#' \code{ipreg} uses an Empirical Bayes approach to integrate external information into penalized linear regression models. It fits models with differential amount of shrinkages for each regression coefficient based on external information.
-#' @param X Numeric design matrix of explanatory variables (\eqn{n} observations in rows, \eqn{p} predictors in columns), without an intercept. \code{ipreg} includes an intercept by default.
+#' \code{xtune} uses an Empirical Bayes approach to integrate external information into penalized linear regression models. It fits models with differential amount of shrinkages for each regression coefficient based on external information.
+#' @param X Numeric design matrix of explanatory variables (\eqn{n} observations in rows, \eqn{p} predictors in columns), without an intercept. \code{xtune} includes an intercept by default.
 #' @param Y Continuous outcome vector of dimension \eqn{n}.
 #' @param Z Numeric information matrix about the predictors (\eqn{p} rows, each corresponding to a predictor in X; \eqn{q} columns of external information about the predictors, such as prior biological importance). If Z is the grouping of predictors, it is best if user codes it as a dummy variable (i.e. each column indicating whether predictors belong to a specific group)
 #' @param sigma.square A user-supplied noise variance estimate. Typically, this is left unspecified, and the function automatically computes an estimated sigma square values using R package \code{selectiveinference}.
 #' @param method The type of regularization applied in the model. method = 'lasso' for Lasso regression, method = 'ridge' for Ridge regression
 #' @param message Generates diagnostic message in model fitting. Default is TRUE.
-#' @param control Specifies \code{ipreg} control object. See \code{\link{ipreg.control}} for more details.
-#' @details \code{ipreg} has two main usages:
+#' @param control Specifies \code{xtune} control object. See \code{\link{xtune.control}} for more details.
+#' @details \code{xtune} has two main usages:
 #' \itemize{
 #' \item The basic usage of it is to choose the tuning parameter \eqn{\lambda} in Lasso and Ridge regression using an
-#' Empirical Bayes approach, as an alternative to the widely-used cross-validation. This is done by calling \code{ipreg} without specifying external information matrix Z.
+#' Empirical Bayes approach, as an alternative to the widely-used cross-validation. This is done by calling \code{xtune} without specifying external information matrix Z.
 #'
-#' \item More importantly, if an external information Z about the predictors X is provided, \code{ipreg} can allow differential shrinkage
+#' \item More importantly, if an external information Z about the predictors X is provided, \code{xtune} can allow differential shrinkage
 #' parameters for regression coefficients in penalized regression models. The idea is that Z might be informative for the effect-size of regression coefficients, therefore we can guide the penalized regression model using Z.
 #' }
 #'
-#' Please note that the number of rows in Z should match with the number of columns in X. Since each column in Z is a feature about X. \href{https://github.com/ChubingZeng/ipreg}{See here for more details on how to specify Z}.
+#' Please note that the number of rows in Z should match with the number of columns in X. Since each column in Z is a feature about X. \href{https://github.com/ChubingZeng/xtune}{See here for more details on how to specify Z}.
 #'
-#' A majorization-minimization procedure is employed to fit \code{ipreg}.
-#' @return An object with S3 class \code{ipreg} containing:
+#' A majorization-minimization procedure is employed to fit \code{xtune}.
+#' @return An object with S3 class \code{xtune} containing:
 #' \item{beta.est}{The fitted vector of coefficients.}
 #' \item{penalty.vector}{The estimated penalty vector applied to each regression coefficient. Similar to the \code{penalty.factor} argument in \link{glmnet}.}
 #' \item{lambda}{The estimated \eqn{\lambda} value. Note that the lambda value is calculated to reflect that the fact that penalty factors are internally rescaled to sum to nvars in \link{glmnet}. Similar to the \code{lambda} argument in \link{glmnet}.}
@@ -29,7 +29,7 @@
 #' \item{sigma.square}{The estimated sigma square value using \code{\link{estimateVariance}}, if \code{sigma.square} is left unspecified.}
 #' \item{likelihood.score}{A vector containing the marginal likelihood value of the fitted model at each iteration.}
 #' @author Chubing Zeng
-#' @seealso \link{predict.ipreg}, as well as \link{glmnet}.
+#' @seealso \link{predict.xtune}, as well as \link{glmnet}.
 #' @examples
 #' ## use simulated example data
 #' set.seed(9)
@@ -39,7 +39,7 @@
 #' Z <- example$Z
 #'
 #' ## Empirical Bayes tuning to estimate tuning parameter, as an alternative to cross-validation:
-#' fit.eb <- ipreg(X,Y)
+#' fit.eb <- xtune(X,Y)
 #' fit.eb$lambda
 #'
 #' ### compare with tuning parameter choosen by cross-validation, using glmnet
@@ -48,14 +48,14 @@
 #' fit.cv$lambda.min
 #'}
 #' ## Differential shrinkage based on external information Z:
-#' fit.diff <- ipreg(X,Y,Z)
+#' fit.diff <- xtune(X,Y,Z)
 #' fit.diff$penalty.vector
 #'
 #' @import glmnet
 #' @importFrom stats optim
 #' @export
 
-ipreg <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridge"), message = TRUE,
+xtune <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridge"), message = TRUE,
     control = list()) {
 
     # function call
@@ -137,7 +137,7 @@ ipreg <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
     }
 
     # check control object
-    control <- do.call("ipreg.control", control)
+    control <- do.call("xtune.control", control)
     control <- initialize_control(control, dat_ext)
 
     if (nex > 1) {
@@ -147,7 +147,7 @@ ipreg <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
     }
 
     # core function
-    fit <- ipreg.fit(X = X, Y = Y, Z = dat_ext, method = method, sigma.square = sigma.square,
+    fit <- xtune.fit(X = X, Y = Y, Z = dat_ext, method = method, sigma.square = sigma.square,
         alpha.init = control$alpha.init, maxstep = control$maxstep, tolerance = control$tolerance,
         maxstep_inner = control$maxstep_inner, tolerance_inner = control$tolerance_inner,
         compute.likelihood = control$compute.likelihood, verbosity = control$verbosity,
@@ -158,12 +158,12 @@ ipreg <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
         fit$penalty.vector = rep(1,nvar)
     }
 
-    return(structure(fit, class = "ipreg"))
+    return(structure(fit, class = "xtune"))
 }
 
-#' Control function for ipreg fitting
+#' Control function for xtune fitting
 #'
-#' @description Control function for \code{\link{ipreg}} fitting.
+#' @description Control function for \code{\link{xtune}} fitting.
 #' @param alpha.init initial values of alpha vector supplied to the algorithm.
 #' alpha values are the hyper-parameters for the double exponential prior of regression coefficients,
 #'  and it controls the prior variance of regression coefficients. Default is a vector of 0 with length p.
@@ -178,7 +178,7 @@ ipreg <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
 #' @export
 
 
-ipreg.control <- function(alpha.init = NULL, maxstep = 100, tolerance = 0.001,
+xtune.control <- function(alpha.init = NULL, maxstep = 100, tolerance = 0.001,
     maxstep_inner = 50, tolerance_inner = 0.1, compute.likelihood = TRUE, verbosity = FALSE,
     standardize = TRUE, intercept = TRUE) {
 

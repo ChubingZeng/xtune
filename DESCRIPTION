@@ -1,4 +1,4 @@
-Package: ipreg
+Package: xtune
 Type: Package
 Title: Regularized Regression with Differential Penalties Integrating External Information
 Version: 0.1.0

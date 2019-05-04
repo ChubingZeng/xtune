@@ -1,12 +1,12 @@
-#' Model predictions based on fitted \code{ipreg} object
+#' Model predictions based on fitted \code{xtune} object
 #'
-#' \code{predict.ipreg} produces predicted values fitting an ipreg model to a new dataset
-#' @param object Fitted 'ipreg' model object.
+#' \code{predict.xtune} produces predicted values fitting an xtune model to a new dataset
+#' @param object Fitted 'xtune' model object.
 #' @param newX Matrix of values at which predictions are to be made.
 #' @param ... Not used
-#' @details \code{coef} and \code{predict} methods are provided as a convenience to extract coefficients and make prediction. \code{predict.ipreg} simply calculate the predicted value using the estimated coefficients returned by \code{ipreg}.
+#' @details \code{coef} and \code{predict} methods are provided as a convenience to extract coefficients and make prediction. \code{predict.xtune} simply calculate the predicted value using the estimated coefficients returned by \code{xtune}.
 #' @return A vector of predictions
-#' @seealso \code{ipreg}, \code{coef.ipreg}
+#' @seealso \code{xtune}, \code{coef.xtune}
 #' @examples
 #' ## simulate data
 #' set.seed(9)
@@ -16,20 +16,20 @@
 #' Z <- example$Z
 #'
 #' ## If no Z provided, perform Empirical Bayes tuning
-#' fit.eb <- ipreg(X,Y)
+#' fit.eb <- xtune(X,Y)
 #' ## Coef and predict methods
 #' coef(fit.eb)
 #' predict(fit.eb,X)
 #'
 #' ## Differential shrinkage based on external information Z:
-#' fit.diff <- ipreg(X,Y,Z)
+#' fit.diff <- xtune(X,Y,Z)
 #' ## Coef and predict methods
 #' coef(fit.diff)
 #' predict(fit.diff,X)
 
 #' @export
 
-predict.ipreg <- function(object, newX, ...) {
+predict.xtune <- function(object, newX, ...) {
     if (!(typeof(newX) %in% c("double", "integer"))) {
         stop("New X contains non-numeric values")
     } else if (!is.matrix(newX)) {

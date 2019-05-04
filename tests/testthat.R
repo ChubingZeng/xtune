@@ -1,4 +1,4 @@
 library(testthat)
-library(ipreg)
+library(xtune)
 
-test_check("ipreg")
+test_check("xtune")

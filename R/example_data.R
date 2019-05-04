@@ -21,5 +21,5 @@
 #' X <- example$X
 #' Y <- example$Y
 #' Z <- example$Z
-#' \donttest{ipreg(X,Y,Z)}
+#' \donttest{xtune(X,Y,Z)}
 "example"

@@ -1,10 +1,10 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-:sparkles: ipreg: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
+:sparkles: xtune: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
 ==================================================================================
 
-[![Build Status](https://travis-ci.org/ChubingZeng/ipreg.svg?branch=master)](https://travis-ci.org/ChubingZeng/ipreg)
-[![Coverage status](https://codecov.io/gh/ChubingZeng/ipreg/branch/master/graph/badge.svg)](https://codecov.io/gh/ChubingZeng/ipreg)
+[![Build Status](https://travis-ci.org/ChubingZeng/xtune.svg?branch=master)](https://travis-ci.org/ChubingZeng/xtune)
+[![Coverage status](https://codecov.io/gh/ChubingZeng/xtune/branch/master/graph/badge.svg)](https://codecov.io/gh/ChubingZeng/xtune)
 
 
 
@@ -34,15 +34,15 @@ Suppose we want to predict a person's cholesterol level using his/her weekly die
 
 &#x1F4D9;  Installation
 -----------------------
-`ipreg` can be installed from Github using the following command:
+`xtune` can be installed from Github using the following command:
 
 ``` r
 # install.packages("devtools")
 
 library(devtools)
-devtools::install_github("ChubingZeng/ipreg")
+devtools::install_github("ChubingZeng/xtune")
 
-library(ipreg)
+library(xtune)
 ```
 
 &#x1F4D8;  Examples
@@ -54,26 +54,26 @@ To show some examples on how to use this package, we simulated an example data t
 data(example)
 ```
 
-`ipreg()` is the core function to fit integrated penalized regression model. At a minimum, you need to specify the predictor matrix `X`, outcome variable `Y`. If an external information matrix `Z` is provided, the function will incorporate `Z` to allow differential shrinkage based on Z. The estimated tuning parameters are returned in `$penalty.vector`. If you do not provide external information `Z`, the function will perform empirical Bayes tuning to choose the single penalty parameter in penalized regression, as an alternative to cross-validation. You could compare the tuning parameter choosen by empirical Bayes tuning to that choose by cross-validation (see also `cv.glmnet`). The default penalty applied to the predictors is the Lasso penalty. 
+`xtune()` is the core function to fit integrated penalized regression model. At a minimum, you need to specify the predictor matrix `X`, outcome variable `Y`. If an external information matrix `Z` is provided, the function will incorporate `Z` to allow differential shrinkage based on Z. The estimated tuning parameters are returned in `$penalty.vector`. If you do not provide external information `Z`, the function will perform empirical Bayes tuning to choose the single penalty parameter in penalized regression, as an alternative to cross-validation. You could compare the tuning parameter choosen by empirical Bayes tuning to that choose by cross-validation (see also `cv.glmnet`). The default penalty applied to the predictors is the Lasso penalty. 
 
 
 ``` r
-ipreg.fit <- ipreg(X,Y,Z)
+xtune.fit <- xtune(X,Y,Z)
 
 ## for ridge
-## ipreg.fit <- ipreg(X,Y,Z,method = "ridge")
+## xtune.fit <- xtune(X,Y,Z,method = "ridge")
 ```
 
-To view the penalty parameters estimated by `ipreg()`
+To view the penalty parameters estimated by `xtune()`
 
 ```
-ipreg.fit$penalty.vectors
+xtune.fit$penalty.vectors
 ```
 
 The `coef` and `predict` functions can be used to extract beta coefficient estimates and predict response on new data. 
 
 ``` r
-coef(ipreg)
-predict(ipreg.fit, X)
+coef(xtune)
+predict(xtune.fit, X)
 ```
 
