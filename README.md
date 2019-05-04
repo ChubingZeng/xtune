@@ -1,6 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-xtune: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
+xtune: Tuning differential shrinkage parameters of penalized regression models based on external information <img src="man/figures/logo.png" align="right" />
 =======
 
 [![Build Status](https://travis-ci.org/ChubingZeng/xtune.svg?branch=master)](https://travis-ci.org/ChubingZeng/xtune)
