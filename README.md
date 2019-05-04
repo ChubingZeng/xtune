@@ -1,11 +1,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<<<<<<< HEAD
-:sparkles: xtune: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
+xtune: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
 =======
-ipreg: Penalized regression with differential shrinkage integrating external information <img src="man/figures/logo.png" align="right" />
->>>>>>> 1ba542579479b7a5403315fa5a4ee13e6f97b0ab
-==================================================================================
 
 [![Build Status](https://travis-ci.org/ChubingZeng/xtune.svg?branch=master)](https://travis-ci.org/ChubingZeng/xtune)
 [![Coverage status](https://codecov.io/gh/ChubingZeng/xtune/branch/master/graph/badge.svg)](https://codecov.io/gh/ChubingZeng/xtune)
@@ -43,7 +39,6 @@ Suppose we want to predict a person's cholesterol level using his/her weekly die
 
 ![example](https://user-images.githubusercontent.com/23446412/56463366-969b3680-6387-11e9-8023-a2cc4bc0cd0d.png)
 
-`ipreg` only handles linear response variable for now; we are currently working on the logistic version of this method. 
 
 &#x1F4D9;  Installation
 -----------------------
@@ -67,15 +62,11 @@ To show some examples on how to use this package, we simulated an example data t
 data(example)
 ```
 
-<<<<<<< HEAD
-`xtune()` is the core function to fit integrated penalized regression model. At a minimum, you need to specify the predictor matrix `X`, outcome variable `Y`. If an external information matrix `Z` is provided, the function will incorporate `Z` to allow differential shrinkage based on Z. The estimated tuning parameters are returned in `$penalty.vector`. If you do not provide external information `Z`, the function will perform empirical Bayes tuning to choose the single penalty parameter in penalized regression, as an alternative to cross-validation. You could compare the tuning parameter choosen by empirical Bayes tuning to that choose by cross-validation (see also `cv.glmnet`). The default penalty applied to the predictors is the Lasso penalty. 
-=======
-`ipreg()` is the core function to fit integrated penalized regression model. At a minimum, you need to specify the predictor matrix `X`, outcome variable `Y`. If an external information matrix `Z` is provided, the function will incorporate `Z` to allow differential shrinkage based on Z. The estimated tuning parameters are returned in `$penalty.vector`. 
+`xtune()` is the core function to fit integrated penalized regression model. At a minimum, you need to specify the predictor matrix `X`, outcome variable `Y`. If an external information matrix `Z` is provided, the function will incorporate `Z` to allow differential shrinkage based on Z. The estimated tuning parameters are returned in `$penalty.vector`. 
 
 If you do not provide external information `Z`, the function will perform empirical Bayes tuning to choose the single penalty parameter in penalized regression, as an alternative to cross-validation. You could compare the tuning parameter choosen by empirical Bayes tuning to that choose by cross-validation (see also `cv.glmnet`). The default penalty applied to the predictors is the Lasso penalty. 
->>>>>>> 1ba542579479b7a5403315fa5a4ee13e6f97b0ab
 
-If you provide an identify matrix as external information Z to `ipreg()`, the function will estimate a seperate tuning parameter ![equation](https://latex.codecogs.com/gif.latex?\lambda_j) for each regression coefficient ![equation](https://latex.codecogs.com/gif.latex?\beta_j).
+If you provide an identify matrix as external information Z to `xtune()`, the function will estimate a seperate tuning parameter ![equation](https://latex.codecogs.com/gif.latex?\lambda_j) for each regression coefficient ![equation](https://latex.codecogs.com/gif.latex?\beta_j).
 
 ``` r
 xtune.fit <- xtune(X,Y,Z)
