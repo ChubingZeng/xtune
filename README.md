@@ -17,11 +17,11 @@ Lasso and Ridge regression are very popular techniques for fitting high dimensio
 
 The motivation of integrated penalized regression is to improve the prediction accuracy of standard Lasso and Ridge regression by allowing **differential amount of shrinkage** for regression coefficients by integrating external information.
 
-The objective function of integrated Lasso regression is: 
+The objective function of integrated Lasso regression with differential shrinkage is: 
 
 ![lasso](https://user-images.githubusercontent.com/23446412/56463267-9b5eeb00-6385-11e9-8aed-82b9df287d5e.png)
 
-The objective function of integrated Ridge regression is: 
+The objective function of integrated Ridge regression with differential shrinkage is: 
 
 ![ridge](https://user-images.githubusercontent.com/23446412/56463270-a580e980-6385-11e9-94a9-2a4245127670.png)
 
@@ -32,6 +32,8 @@ The external information could be any nominal or quantiative feature-specific in
 ### Tuning multiple penalty parameters
 
 Cross-validation is widely used to tune a single penalty parameter, but it is computationally infeasible to tune more than three penalty parameters. Therefore, we propose an **Empirical Bayes** approach to learn the multiple tuning parameters. The individual penalties are interpreted as variance terms of the priors (double exponential prior for Lasso and Gaussian prior for Ridge) in a random effect formulation of penalized regressions. A majorization-minimization algorithm is employed for implementation. 
+
+Once the tuning parameters *λs* are estimated, and therefore the penalties known, the regression coefficients are obtained using `glmnet`. 
 
 ### Data structure examples
 
