@@ -1,8 +1,8 @@
-#' Fit penalized regression with differential shrinkage based on external information.
+#' Tuning differential shrinkage parameters in penalized regression based on external information.
 #'
 #' \code{xtune} uses an Empirical Bayes approach to integrate external information into penalized linear regression models. It fits models with differential amount of shrinkages for each regression coefficient based on external information.
 #' @param X Numeric design matrix of explanatory variables (\eqn{n} observations in rows, \eqn{p} predictors in columns), without an intercept. \code{xtune} includes an intercept by default.
-#' @param Y Continuous outcome vector of dimension \eqn{n}.
+#' @param Y Outcome vector of dimension \eqn{n}. Quantitative for family="gaussian", or family="binomial" for a factor with two levels.
 #' @param Z Numeric information matrix about the predictors (\eqn{p} rows, each corresponding to a predictor in X; \eqn{q} columns of external information about the predictors, such as prior biological importance). If Z is the grouping of predictors, it is best if user codes it as a dummy variable (i.e. each column indicating whether predictors belong to a specific group)
 #' @param sigma.square A user-supplied noise variance estimate. Typically, this is left unspecified, and the function automatically computes an estimated sigma square values using R package \code{selectiveinference}.
 #' @param method The type of regularization applied in the model. method = 'lasso' for Lasso regression, method = 'ridge' for Ridge regression
@@ -56,109 +56,120 @@
 #' @export
 
 xtune <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridge"), message = TRUE,
-    control = list()) {
+                  control = list()) {
 
-    # function call
-    this.call <- match.call()
+        # function call
+        this.call <- match.call()
 
-    # check error distribution for y
-    method = match.arg(method)
+        # check error distribution for y
+        method = match.arg(method)
 
-    # check user inputs Check X, X need to be a matrix or data.frame
-    np = dim(X)
-    if (is.null(np) | (np[2] <= 1))
-        stop("X must be a matrix with 2 or more columns")
+        # check user inputs Check X, X need to be a matrix or data.frame
+        np = dim(X)
+        if (is.null(np) | (np[2] <= 1))
+                stop("X must be a matrix with 2 or more columns")
 
-    nobs = as.integer(np[1])
-    nvar = as.integer(np[2])
+        nobs = as.integer(np[1])
+        nvar = as.integer(np[2])
 
-    ## Check Y
-    Y <- as.double(drop(Y))
-    dimY = dim(Y)
-    nrowY = ifelse(is.null(dimY), length(Y), dimY[1])
-    if (nrowY != nobs)
-        stop(paste("number of observations in Y (", nrowY, ") not equal to the number of rows of X (",
-            nobs, ")", sep = ""))
-
-    # Check Z If no Z provided, then provide Z of a single column of 1
-    if (is.null(Z)) {
-            if (message == TRUE){
-                    cat("No Z matrix provided, only a single tuning parameter will be estimated using empirical Bayes tuning","\n")
-            }
-        dat_ext = matrix(rep(1, nvar))
-    } else {
-        #### If Z is provided:
-        dimZ = dim(Z)
-        nrowZ = ifelse(is.null(dimZ), length(Z), dimZ[1])
-        ncolZ = ifelse(is.null(dimZ), 1, dimZ[2])
-
-        if (nrowZ != nvar) {
-            ## check the dimension of Z
-            stop(paste("number of rows in Z (", nrow(Z), ") not equal to the number of columns in X (",
-                nvar, ")", sep = ""))
-        } else if (!is.matrix(Z)) {
-            ## check is Z is a matrix
-            Z = as.matrix(Z)
-            dat_ext <- Z
-        } else if (!(typeof(Z) %in% c("double", "integer"))) {
-            stop("Z contains non-numeric values")
-        } else if (all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)) {
-            ## check if all rows in Z are the same
-            warning(paste("All rows in Z are the same, this Z matrix is not useful, EB tuning will be performed to estimate
-                                a single tuning parameter","\n"))
-            dat_ext = matrix(rep(1, nvar))
-        } else {
-            dat_ext <- Z
+        ## Check Y
+        if (!is.numeric(Y) & !is.factor(Y)){
+                stop("Y must be a quantitive vector or a factor vector with two levels")
         }
-    }
 
-    if (!identical(dat_ext[, 1], rep(1, nvar))) {
-            ## if no column of one is appended then append a column of 1s
-            dat_ext = cbind(1, dat_ext)
-    }
+        Y <- as.double(drop(Y))
+        dimY = dim(Y)
+        nrowY = ifelse(is.null(dimY), length(Y), dimY[1])
+        if (nrowY != nobs)
+                stop(paste("number of observations in Y (", nrowY, ") not equal to the number of rows of X (",
+                           nobs, ")", sep = ""))
 
-    drop(Z)
-    nex = ncol(dat_ext)
+        # Check Z If no Z provided, then provide Z of a single column of 1
+        if (is.null(Z)) {
+                if (message == TRUE){
+                        cat("No Z matrix provided, only a single tuning parameter will be estimated using empirical Bayes tuning","\n")
+                }
+                dat_ext = matrix(rep(1, nvar))
+        } else {
+                #### If Z is provided:
+                dimZ = dim(Z)
+                nrowZ = ifelse(is.null(dimZ), length(Z), dimZ[1])
+                ncolZ = ifelse(is.null(dimZ), 1, dimZ[2])
 
-    ## Check sigma.square
-    if (is.null(sigma.square)) {
-        sigma.square = estimateVariance(X, Y)
-    } else if (!is.double(sigma.square) | is.infinite(sigma.square) | sigma.square <=
-        0) {
-        stop("sigma square should be a positive finite number")
-    } else {
-        sigma.square = sigma.square
-    }
+                if (nrowZ != nvar) {
+                        ## check the dimension of Z
+                        stop(paste("number of rows in Z (", nrow(Z), ") not equal to the number of columns in X (",
+                                   nvar, ")", sep = ""))
+                } else if (!is.matrix(Z)) {
+                        ## check is Z is a matrix
+                        Z = as.matrix(Z)
+                        dat_ext <- Z
+                } else if (!(typeof(Z) %in% c("double", "integer"))) {
+                        stop("Z contains non-numeric values")
+                } else if (all(apply(Z, 2, function(x) length(unique(x)) == 1) == TRUE)) {
+                        ## check if all rows in Z are the same
+                        warning(paste("All rows in Z are the same, this Z matrix is not useful, EB tuning will be performed to estimate
+                                      a single tuning parameter","\n"))
+                        dat_ext = matrix(rep(1, nvar))
+                } else {
+                        dat_ext <- Z
+                }
+        }
 
-    # Check method
-    if (!method %in% c("lasso", "ridge")) {
-        warning("Method not lasso or ridge; set to lasso")
-        method = "lasso"
-    }
+        if (!identical(dat_ext[, 1], rep(1, nvar))) {
+                ## if no column of one is appended then append a column of 1s
+                dat_ext = cbind(1, dat_ext)
+        }
 
-    # check control object
-    control <- do.call("xtune.control", control)
-    control <- initialize_control(control, dat_ext)
+        drop(Z)
+        nex = ncol(dat_ext)
 
-    if (nex > 1) {
-            if (message == TRUE){
-                    cat(paste("Z provided, start estimating individual tuning parameters","\n"))
-                    }
-    }
+        ## Check sigma.square
+        if (is.null(sigma.square)) {
+                sigma.square = estimateVariance(X, Y)
+        } else if (!is.double(sigma.square) | is.infinite(sigma.square) | sigma.square <=
+                   0) {
+                stop("sigma square should be a positive finite number")
+        } else {
+                sigma.square = sigma.square
+        }
 
-    # core function
-    fit <- xtune.fit(X = X, Y = Y, Z = dat_ext, method = method, sigma.square = sigma.square,
-        alpha.init = control$alpha.init, maxstep = control$maxstep, tolerance = control$tolerance,
-        maxstep_inner = control$maxstep_inner, tolerance_inner = control$tolerance_inner,
-        compute.likelihood = control$compute.likelihood, verbosity = control$verbosity,
-        standardize = control$standardize, intercept = control$intercept)
+        # Check method
+        if (!method %in% c("lasso", "ridge")) {
+                warning("Method not lasso or ridge; set to lasso")
+                method = "lasso"
+        }
 
-    # Check status of model fit
-    if (length(unique(fit$penalty.vector)) == 1) {
-        fit$penalty.vector = rep(1,nvar)
-    }
+        # check control object
+        control <- do.call("xtune.control", control)
+        control <- initialize_control(control, dat_ext)
 
-    return(structure(fit, class = "xtune"))
+        if (nex > 1) {
+                if (message == TRUE){
+                        cat(paste("Z provided, start estimating individual tuning parameters","\n"))
+                }
+        }
+
+        # core function
+        fit <- xtune.fit(X = X, Y = Y, Z = dat_ext, method = method, sigma.square = sigma.square,
+                         alpha.init = control$alpha.init, maxstep = control$maxstep, tolerance = control$tolerance,
+                         maxstep_inner = control$maxstep_inner, tolerance_inner = control$tolerance_inner,
+                         compute.likelihood = control$compute.likelihood, verbosity = control$verbosity,
+                         standardize = control$standardize, intercept = control$intercept)
+
+        # Check status of model fit
+        if (length(unique(fit$penalty.vector)) == 1) {
+                fit$penalty.vector = rep(1,nvar)
+        }
+
+        # Check the family of Y
+        if (length(unique(Y)) == 2){
+                ## add class estimate
+                ## add score estimate
+                fit$score <- cbind(1,X)%*%fit$beta.est
+        }
+
+        return(structure(fit, class = "xtune"))
 }
 
 #' Control function for xtune fitting
@@ -179,50 +190,50 @@ xtune <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
 
 
 xtune.control <- function(alpha.init = NULL, maxstep = 100, tolerance = 0.001,
-    maxstep_inner = 50, tolerance_inner = 0.1, compute.likelihood = TRUE, verbosity = FALSE,
-    standardize = TRUE, intercept = TRUE) {
+                          maxstep_inner = 50, tolerance_inner = 0.1, compute.likelihood = TRUE, verbosity = FALSE,
+                          standardize = TRUE, intercept = TRUE) {
 
-    if (maxstep < 0) {
-        stop("Error: max out loop step must be a postive integer")
-    }
+        if (maxstep < 0) {
+                stop("Error: max out loop step must be a postive integer")
+        }
 
-    if (tolerance < 0) {
-        stop("Error: outer loop tolerance must be greater than 0")
-    }
+        if (tolerance < 0) {
+                stop("Error: outer loop tolerance must be greater than 0")
+        }
 
-    if (maxstep_inner < 0) {
-        stop("Error: max out loop step must be a postive integer")
-    }
+        if (maxstep_inner < 0) {
+                stop("Error: max out loop step must be a postive integer")
+        }
 
-    if (tolerance_inner < 0) {
-        stop("Error: outer loop tolerance must be greater than 0")
-    }
+        if (tolerance_inner < 0) {
+                stop("Error: outer loop tolerance must be greater than 0")
+        }
 
-    if (!is.logical(compute.likelihood)) {
-        stop("Error: compute.likelihood should be either TRUE or FALSE")
-    }
+        if (!is.logical(compute.likelihood)) {
+                stop("Error: compute.likelihood should be either TRUE or FALSE")
+        }
 
-    if (!is.logical(verbosity)) {
-        stop("Error: verbosity should be either TRUE or FALSE")
-    }
+        if (!is.logical(verbosity)) {
+                stop("Error: verbosity should be either TRUE or FALSE")
+        }
 
-    control_obj <- list(alpha.init = alpha.init, maxstep = maxstep, tolerance = tolerance,
-        maxstep_inner = maxstep_inner, tolerance_inner = tolerance_inner, compute.likelihood = compute.likelihood,
-        verbosity = verbosity, standardize = standardize, intercept = intercept)
+        control_obj <- list(alpha.init = alpha.init, maxstep = maxstep, tolerance = tolerance,
+                            maxstep_inner = maxstep_inner, tolerance_inner = tolerance_inner, compute.likelihood = compute.likelihood,
+                            verbosity = verbosity, standardize = standardize, intercept = intercept)
 }
 
 initialize_control <- function(control_obj, ext) {
-    if (is.null(control_obj$alpha.init) | all(apply(ext, 2, function(x) length(unique(x)) ==
-        1) == TRUE)) {
-        alpha.init = rep(0, ncol(ext))
-    } else if (length(control_obj$alpha.init) != ncol(ext)) {
-        warning(cat(paste("number of elements in alpha initial values (", length(alpha.init),
-            ") not equal to the number of columns of ext (", q, ")", ", alpha initial set to be all 0",
-            sep = "")))
-    } else {
-        alpha.init = control_obj$alpha.init
-    }
-    control_obj$alpha.init <- alpha.init
-    return(control_obj)
+        if (is.null(control_obj$alpha.init) | all(apply(ext, 2, function(x) length(unique(x)) ==
+                                                        1) == TRUE)) {
+                alpha.init = rep(0, ncol(ext))
+        } else if (length(control_obj$alpha.init) != ncol(ext)) {
+                warning(cat(paste("number of elements in alpha initial values (", length(alpha.init),
+                                  ") not equal to the number of columns of ext (", q, ")", ", alpha initial set to be all 0",
+                                  sep = "")))
+        } else {
+                alpha.init = control_obj$alpha.init
+        }
+        control_obj$alpha.init <- alpha.init
+        return(control_obj)
 }
 

@@ -1,5 +1,5 @@
 ---
-title: "An R Package `classo` for Empirical Bayes tuning and Customized Lasso with External Information"
+title: "`xtune`: Tuning differential shrinkage parameters of penalized regression models based on external information"
 author: "Chubing Zeng"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -15,6 +15,16 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+## Overview
+The main goal of `xtune` is to tuning multiple shrinkage parameters in Lasso and Ridge regression, based on external information. Standard Lasso or Ridge regression only have a single penalty parameter $\lambda$ applied equally to all regression coefficients to control the amount of regularization in the model. Here we apply an individual shrinkage parameter $\lambda_j$ to each regression coefficient $\beta_j$. And the 
+vector of shrinkage parameters $\lambda s = (\lambda_1,...,\lambda_p)$ is modeled as a function of the external information $Z$ provided to the model. A better prediction accuracy for penalized regression models may be achieved by allowing individual shrinkage for each regression coefficients based on external in-formation. 
+
+We employ an Empirical Bayes approach to learn the multiple tuning parameters. Once the tuning parameters $\lambda$s are estimated, and therefore the penalties known, the regression coefficients are obtained using glmnet.
+
+The response variable can be quantitative a factor with two levels. For binary response variable, a sparse LDA procedure is used to get the fisher discriminant direction and the discriminant function for a new data point. Utilities for carrying out post-fitting visualization, summarization, and prediction are also provided.
+
+
+## Examples
 
 Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
 

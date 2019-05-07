@@ -2,7 +2,7 @@
 % Please edit documentation in R/xtune.R
 \name{xtune}
 \alias{xtune}
-\title{Fit penalized regression with differential shrinkage based on external information.}
+\title{Tuning differential shrinkage parameters in penalized regression based on external information.}
 \usage{
 xtune(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridge"),
   message = TRUE, control = list())
@@ -10,7 +10,7 @@ xtune(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridge"),
 \arguments{
 \item{X}{Numeric design matrix of explanatory variables (\eqn{n} observations in rows, \eqn{p} predictors in columns), without an intercept. \code{xtune} includes an intercept by default.}
 
-\item{Y}{Continuous outcome vector of dimension \eqn{n}.}
+\item{Y}{Outcome vector of dimension \eqn{n}. Quantitative for family="gaussian", or family="binomial" for a factor with two levels.}
 
 \item{Z}{Numeric information matrix about the predictors (\eqn{p} rows, each corresponding to a predictor in X; \eqn{q} columns of external information about the predictors, such as prior biological importance). If Z is the grouping of predictors, it is best if user codes it as a dummy variable (i.e. each column indicating whether predictors belong to a specific group)}
 
