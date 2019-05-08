@@ -29,14 +29,28 @@
 
 #' @export
 
-predict.xtune <- function(object, newX, ...) {
-    if (!(typeof(newX) %in% c("double", "integer"))) {
-        stop("New X contains non-numeric values")
-    } else if (!is.matrix(newX)) {
-            stop("New X is not a matrix")
-    } else if (length(object$beta.est[-1]) != ncol(newX)) {
-        stop("New X does not have the same number of columns as X train")
-    }
-    predicted <- object$beta.est[1] + newX %*% object$beta.est[-1]
+predict.xtune <- function(object, newX, type = c("response","class"), ...) {
+        type = match.arg(type)
+        ## check new X input
+        if (missing(newX)){
+            stop("You need to supply a value for 'newX'")
+            } else if (!(typeof(newX) %in% c("double", "integer"))) {
+                    stop("New X contains non-numeric values")
+                    } else if (!is.matrix(newX)) {
+                            stop("New X is not a matrix")
+                            } else if (length(object$beta.est[-1]) != ncol(newX)) {
+                                    stop("New X does not have the same number of columns as X train")
+                                    }
+
+        # Check the family of Y
+        ## linear
+        predicted <- object$beta.est[1] + newX %*% object$beta.est[-1]
+
+        if (length(unique(Y)) == 2){
+                ## add class estimate
+                ## add score estimate
+                fit$score <- cbind(1,X)%*%fit$beta.est
+        }
+
     return(drop(predicted))
 }

@@ -51,8 +51,9 @@ xtune.fit <- function(X, Y, Z, sigma.square, method, alpha.init, maxstep, tolera
                 pen_vec[pen_vec > 1e3] <- Inf
                 C = ifelse(is.nan(mean(pen_vec[pen_vec!=Inf])),1e5,mean(pen_vec[pen_vec!=Inf]))
 
-                cus.coef = coef(glmnet(X, Y, alpha = 1, lambda = C, penalty.factor = pen_vec,
-                                       standardize = standardize, intercept = intercept))
+                obj <- glmnet(X, Y, alpha = 1,family="gaussian",standardize = standardize, intercept = intercept)
+                cus.coef <- coef(obj,x=X,y=Y,exact=TRUE,s= C, penalty.factor = pen_vec,standardize=standardize,intercept = intercept)
+
         }
         if (method == "ridge") {
                 ##---------- ridge regression
@@ -97,10 +98,10 @@ xtune.fit <- function(X, Y, Z, sigma.square, method, alpha.init, maxstep, tolera
                 pen_vec[pen_vec > 1e3] <- Inf
                 C = ifelse(is.nan(mean(pen_vec[pen_vec!=Inf])),1e5,mean(pen_vec[pen_vec!=Inf]))
 
+                obj <- glmnet(X, Y, alpha = 0,family="gaussian",standardize = standardize, intercept = intercept)
+                cus.coef <- coef(obj,x=X,y=Y,exact=TRUE,s= C, penalty.factor = pen_vec,standardize=standardize,intercept = intercept)
 
-                cus.coef <- coef(glmnet(X, Y, alpha = 0, lambda = C, penalty.factor = pen_vec,
-                                        standardize = standardize, intercept = intercept))
         }
-        return(list(beta.est = as.vector(cus.coef), penalty.vector = pen_vec, lambda = C, alpha.est = alpha.old, method=method,
+        return(list(beta.est = cus.coef, penalty.vector = pen_vec, lambda = C, alpha.est = alpha.old, method=method,
                     n_iter = k - 1, sigma.square = sigma.square, likelihood.score = likelihood.score))
 }

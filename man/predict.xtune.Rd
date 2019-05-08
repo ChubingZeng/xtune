@@ -4,7 +4,7 @@
 \alias{predict.xtune}
 \title{Model predictions based on fitted \code{xtune} object}
 \usage{
-\method{predict}{xtune}(object, newX, ...)
+\method{predict}{xtune}(object, newX, type = c("response", "class"), ...)
 }
 \arguments{
 \item{object}{Fitted 'xtune' model object.}

@@ -5,7 +5,7 @@
 \title{Control function for xtune fitting}
 \usage{
 xtune.control(alpha.init = NULL, maxstep = 100, tolerance = 0.001,
-  maxstep_inner = 50, tolerance_inner = 0.1, compute.likelihood = TRUE,
+  maxstep_inner = 50, tolerance_inner = 0.1, compute.likelihood = FALSE,
   verbosity = FALSE, standardize = TRUE, intercept = TRUE)
 }
 \arguments{

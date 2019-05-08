@@ -4,15 +4,17 @@
 \alias{xtune}
 \title{Tuning differential shrinkage parameters in penalized regression based on external information.}
 \usage{
-xtune(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridge"),
-  message = TRUE, control = list())
+xtune(X, Y, Z = NULL, family = c("linear", "binary"), sigma.square = NULL,
+  method = c("lasso", "ridge"), message = TRUE, control = list())
 }
 \arguments{
 \item{X}{Numeric design matrix of explanatory variables (\eqn{n} observations in rows, \eqn{p} predictors in columns), without an intercept. \code{xtune} includes an intercept by default.}
 
-\item{Y}{Outcome vector of dimension \eqn{n}. Quantitative for family="gaussian", or family="binomial" for a factor with two levels.}
+\item{Y}{Outcome vector of dimension \eqn{n}. Quantitative for family="linear", or family="binary" for a 0/1 binary outcome variable.}
 
 \item{Z}{Numeric information matrix about the predictors (\eqn{p} rows, each corresponding to a predictor in X; \eqn{q} columns of external information about the predictors, such as prior biological importance). If Z is the grouping of predictors, it is best if user codes it as a dummy variable (i.e. each column indicating whether predictors belong to a specific group)}
+
+\item{family}{Response type. "linear" for continuous outcome, "binary" for 0/1 binary outcome.}
 
 \item{sigma.square}{A user-supplied noise variance estimate. Typically, this is left unspecified, and the function automatically computes an estimated sigma square values using R package \code{selectiveinference}.}
 
@@ -30,7 +32,8 @@ An object with S3 class \code{xtune} containing:
 \item{n_iter}{Number of iterations used until convergence.}
 \item{method}{Same as in argument above}
 \item{sigma.square}{The estimated sigma square value using \code{\link{estimateVariance}}, if \code{sigma.square} is left unspecified.}
-\item{likelihood.score}{A vector containing the marginal likelihood value of the fitted model at each iteration.}
+\item{family}{same as above}
+\item{likelihood}{A vector containing the marginal likelihood value of the fitted model at each iteration.}
 }
 \description{
 \code{xtune} uses an Empirical Bayes approach to integrate external information into penalized linear regression models. It fits models with differential amount of shrinkages for each regression coefficient based on external information.

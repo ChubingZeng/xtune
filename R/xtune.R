@@ -2,8 +2,9 @@
 #'
 #' \code{xtune} uses an Empirical Bayes approach to integrate external information into penalized linear regression models. It fits models with differential amount of shrinkages for each regression coefficient based on external information.
 #' @param X Numeric design matrix of explanatory variables (\eqn{n} observations in rows, \eqn{p} predictors in columns), without an intercept. \code{xtune} includes an intercept by default.
-#' @param Y Outcome vector of dimension \eqn{n}. Quantitative for family="gaussian", or family="binomial" for a factor with two levels.
+#' @param Y Outcome vector of dimension \eqn{n}. Quantitative for family="linear", or family="binary" for a 0/1 binary outcome variable.
 #' @param Z Numeric information matrix about the predictors (\eqn{p} rows, each corresponding to a predictor in X; \eqn{q} columns of external information about the predictors, such as prior biological importance). If Z is the grouping of predictors, it is best if user codes it as a dummy variable (i.e. each column indicating whether predictors belong to a specific group)
+#' @param family Response type. "linear" for continuous outcome, "binary" for 0/1 binary outcome.
 #' @param sigma.square A user-supplied noise variance estimate. Typically, this is left unspecified, and the function automatically computes an estimated sigma square values using R package \code{selectiveinference}.
 #' @param method The type of regularization applied in the model. method = 'lasso' for Lasso regression, method = 'ridge' for Ridge regression
 #' @param message Generates diagnostic message in model fitting. Default is TRUE.
@@ -27,7 +28,8 @@
 #' \item{n_iter}{Number of iterations used until convergence.}
 #' \item{method}{Same as in argument above}
 #' \item{sigma.square}{The estimated sigma square value using \code{\link{estimateVariance}}, if \code{sigma.square} is left unspecified.}
-#' \item{likelihood.score}{A vector containing the marginal likelihood value of the fitted model at each iteration.}
+#' \item{family}{same as above}
+#' \item{likelihood}{A vector containing the marginal likelihood value of the fitted model at each iteration.}
 #' @author Chubing Zeng
 #' @seealso \link{predict.xtune}, as well as \link{glmnet}.
 #' @examples
@@ -55,14 +57,14 @@
 #' @importFrom stats optim
 #' @export
 
-xtune <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridge"), message = TRUE,
+xtune <- function(X, Y, Z = NULL,family=c("linear","binary"), sigma.square = NULL, method = c("lasso", "ridge"), message = TRUE,
                   control = list()) {
 
         # function call
         this.call <- match.call()
 
-        # check error distribution for y
         method = match.arg(method)
+        family = match.arg(family)
 
         # check user inputs Check X, X need to be a matrix or data.frame
         np = dim(X)
@@ -74,8 +76,15 @@ xtune <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
 
         ## Check Y
         if (!is.numeric(Y) & !is.factor(Y)){
-                stop("Y must be a quantitive vector or a factor vector with two levels")
+                stop("Y must be a quantitive vector or a 0/1 binary factor variable")
+        } else if (is.factor(Y)){
+                if(sum(!(levels(Y) %in% c("0","1")))!=0){
+                        stop("Y is not 0/1 binary variable")
+                }
+                family = "binary"
         }
+
+        ## Change family to binary if Y only has two levels
 
         Y <- as.double(drop(Y))
         dimY = dim(Y)
@@ -162,13 +171,7 @@ xtune <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
                 fit$penalty.vector = rep(1,nvar)
         }
 
-        # Check the family of Y
-        if (length(unique(Y)) == 2){
-                ## add class estimate
-                ## add score estimate
-                fit$score <- cbind(1,X)%*%fit$beta.est
-        }
-
+        fit$family = family
         return(structure(fit, class = "xtune"))
 }
 
@@ -190,7 +193,7 @@ xtune <- function(X, Y, Z = NULL, sigma.square = NULL, method = c("lasso", "ridg
 
 
 xtune.control <- function(alpha.init = NULL, maxstep = 100, tolerance = 0.001,
-                          maxstep_inner = 50, tolerance_inner = 0.1, compute.likelihood = TRUE, verbosity = FALSE,
+                          maxstep_inner = 50, tolerance_inner = 0.1, compute.likelihood = FALSE, verbosity = FALSE,
                           standardize = TRUE, intercept = TRUE) {
 
         if (maxstep < 0) {

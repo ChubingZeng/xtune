@@ -15,61 +15,33 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-## Overview
-The main goal of `xtune` is to tuning multiple shrinkage parameters in Lasso and Ridge regression, based on external information. Standard Lasso or Ridge regression only have a single penalty parameter $\lambda$ applied equally to all regression coefficients to control the amount of regularization in the model. Here we apply an individual shrinkage parameter $\lambda_j$ to each regression coefficient $\beta_j$. And the 
+###  Overview
+The main goal of `xtune` is to tuning multiple shrinkage parameters in Lasso and Ridge regression, based on external information. Standard Lasso or Ridge regression only have a single penalty parameter $\lambda$ applied equally to all regression coefficients to control the amount of regularization in the model. 
+
+Here we apply an individual shrinkage parameter $\lambda_j$ to each regression coefficient $\beta_j$. And the 
 vector of shrinkage parameters $\lambda s = (\lambda_1,...,\lambda_p)$ is modeled as a function of the external information $Z$ provided to the model. A better prediction accuracy for penalized regression models may be achieved by allowing individual shrinkage for each regression coefficients based on external in-formation. 
 
 We employ an Empirical Bayes approach to learn the multiple tuning parameters. Once the tuning parameters $\lambda$s are estimated, and therefore the penalties known, the regression coefficients are obtained using glmnet.
 
-The response variable can be quantitative a factor with two levels. For binary response variable, a sparse LDA procedure is used to get the fisher discriminant direction and the discriminant function for a new data point. Utilities for carrying out post-fitting visualization, summarization, and prediction are also provided.
+The response variable can be quantitative a factor with two levels. For binary response variable, a sparse LDA procedure is used to get the fisher discriminant direction and the discriminant function for a new data point.
 
 
-## Examples
+Utilities for carrying out post-fitting summarization and prediction are also provided.
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+This file uses three simulated examples to illustrate the usage and syntax of `xtune`. Please note that all datasets are simulated. 
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+### Examples 1 
+The purpose of this example is to give users a general sense of the data structure  
 
-## Vignette Info
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
 
-## Styles
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
 
-## Figures
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
 
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
-```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
 
-## More Examples
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
