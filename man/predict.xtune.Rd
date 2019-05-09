@@ -4,12 +4,20 @@
 \alias{predict.xtune}
 \title{Model predictions based on fitted \code{xtune} object}
 \usage{
-\method{predict}{xtune}(object, newX, type = c("response", "class"), ...)
+\method{predict}{xtune}(object, newX, type = c("response", "class"),
+  X = NULL, Y = NULL, ...)
 }
 \arguments{
 \item{object}{Fitted 'xtune' model object.}
 
 \item{newX}{Matrix of values at which predictions are to be made.}
+
+\item{type}{Type of prediction required. For "linear" models it gives the fitted values. Type "response" gives the fitted probability scores for "binary" outcome.  Type "class" applies only to "binary" models, and produces the class label corresponding to the maximum probability.
+Note that with type = "class", it is required to supply the original X =  and Y = as additional arguments to \code{predict()}.}
+
+\item{X}{Passing arguments \code{X= } when \code{type = class}}
+
+\item{Y}{Passing arguments \code{Y= } when \code{type = class}}
 
 \item{...}{Not used}
 }

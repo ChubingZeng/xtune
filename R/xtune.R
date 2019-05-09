@@ -82,10 +82,11 @@ xtune <- function(X, Y, Z = NULL,family=c("linear","binary"), sigma.square = NUL
                         stop("Y is not 0/1 binary variable")
                 }
                 family = "binary"
+        } else if (sort(unique(Y)) %in% c(0,1)){
+                family = "binary"
         }
 
         ## Change family to binary if Y only has two levels
-
         Y <- as.double(drop(Y))
         dimY = dim(Y)
         nrowY = ifelse(is.null(dimY), length(Y), dimY[1])

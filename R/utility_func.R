@@ -1,5 +1,5 @@
 #' @importFrom stats optim var coef
-update_alpha.lasso <- function(X, Y, Z, alpha.old, sigma.square, theta, maxstep_inner, 
+update_alpha.lasso <- function(X, Y, Z, alpha.old, sigma.square, theta, maxstep_inner,
     tolerance_inner) {
     ## initial
     alpha.inner.old = alpha.old
@@ -11,11 +11,11 @@ update_alpha.lasso <- function(X, Y, Z, alpha.old, sigma.square, theta, maxstep_
         gamma = 2 * exp(-2 * Z %*% alpha.inner.old)
         sd_y <- sqrt(var(Y) * (n - 1)/n)
         C = sum(1/gamma)/p * sd_y * sigma.square/n
-        delta.est = coef(glmnet(X, Y, alpha = 0, penalty.factor = 1/gamma, lambda = C, 
+        delta.est = coef(glmnet(X, Y, alpha = 0, penalty.factor = 1/gamma, lambda = C,
             standardize = F, intercept = FALSE))[-1]
-        
+
         ## given delta update alpha
-        alpha.inner.new <- optim(alpha.old, likelihood.alpha.theta.lasso, likelihood.alpha.theta.gradient.lasso, 
+        alpha.inner.new <- optim(alpha.old, likelihood.alpha.theta.lasso, likelihood.alpha.theta.gradient.lasso,
             Z = Z, theta = theta, delta = delta.est, method = "BFGS")$par
         if (sum(abs(alpha.inner.new - alpha.inner.old)) < tolerance_inner) {
             break
@@ -47,7 +47,7 @@ approx_likelihood.lasso <- function(to_estimate, X, Y, Z, sigma.square.est) {
     return(-as.numeric(normapprox))
 }
 
-update_alpha.ridge <- function(X, Y, Z, alpha.old, sigma.square, theta, maxstep_inner, 
+update_alpha.ridge <- function(X, Y, Z, alpha.old, sigma.square, theta, maxstep_inner,
     tolerance_inner) {
     ## initial
     alpha.inner.old = alpha.old
@@ -59,11 +59,11 @@ update_alpha.ridge <- function(X, Y, Z, alpha.old, sigma.square, theta, maxstep_
         gamma = exp(-Z %*% alpha.inner.old)
         sd_y <- sqrt(var(Y) * (n - 1)/n)
         C = sum(1/gamma)/p * sd_y * sigma.square/n
-        delta.est = coef(glmnet(X, Y, alpha = 0, penalty.factor = 1/gamma, lambda = C, 
+        delta.est = coef(glmnet(X, Y, alpha = 0, penalty.factor = 1/gamma, lambda = C,
             standardize = F, intercept = FALSE))[-1]
-        
+
         ## given delta update alpha
-        alpha.inner.new <- optim(alpha.old, likelihood.alpha.theta.ridge, likelihood.alpha.theta.gradient.ridge, 
+        alpha.inner.new <- optim(alpha.old, likelihood.alpha.theta.ridge, likelihood.alpha.theta.gradient.ridge,
             Z = Z, theta = theta, delta = delta.est, method = "BFGS")$par
         if (sum(abs(alpha.inner.new - alpha.inner.old)) < tolerance_inner) {
             break
@@ -107,7 +107,7 @@ score_function <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est) {
     n = nrow(X)
     p = ncol(X)
     gamma = 2/exp(2 * Z %*% to_estimate)
-    Rinv <- backsolve(chol(crossprod(X)/sigma_square + diag(c(1/gamma))), diag(1, 
+    Rinv <- backsolve(chol(crossprod(X)/sigma_square + diag(c(1/gamma))), diag(1,
         p))
     diagSigma <- rowSums(Rinv^2)
     mu_vec <- (Rinv %*% (crossprod(Rinv, crossprod(X, Y))))/sigma_square
@@ -127,4 +127,21 @@ approx_likelihood <- function(to_estimate, input_X, input_Y, input_Z, sigma2_est
     part1 = t(Y) %*% solve(K, Y)
     normapprox = 1/2 * (part1 + logdetK)
     return(as.numeric(normapprox))
+}
+
+beta.lda <- function(beta,X,Y){
+        n<-length(Y)
+        n1<-n-sum(Y)
+        n2<-sum(Y)
+
+        beta1<-beta[-1]
+        sel<-which(abs(beta1)!=0)
+        mu1<-as.matrix(apply(X[Y==0,sel,drop=F],2,mean))
+        mu2<-as.matrix(apply(X[Y==1,sel,drop=F],2,mean))
+        sigma.hat<-(cov(X[Y==0,sel,drop=F])*(n1-1)+cov(X[Y==1,sel,drop=F])*(n2-1))/(n-2)
+        beta1[sel]<-sweep(as.matrix(beta1[sel,drop=F]),2,sign(t(mu2-mu1)%*%beta1[sel,drop=F]),"*")
+        beta0<--t((mu1+mu2))%*%beta1[sel,drop=F]/2-log(n1/n2)*diag(t(beta1[sel,drop=F])%*%sigma.hat%*%beta1[sel,drop=F])/(t(mu2-mu1)%*%beta1[sel,drop=F])
+        beta0[is.na(beta0)]<-n2-n1
+        beta[1,]<-beta0
+        return(beta)
 }
