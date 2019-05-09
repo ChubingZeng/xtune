@@ -101,3 +101,4 @@ coef(xtune)
 predict(xtune.fit, example$X)
 ```
 
+Two real-world examples are also described in the vignettes to illustrate the usage and syntax of this package. 
