@@ -49,7 +49,7 @@ predict.xtune <- function(object, newX, type = c("response","class"), X= NULL,Y=
         # Check the family of Y
         if (type == "class" & object$family == "binary"){
                 # check if X and Y is supplied:
-                if (is.null(X) | is.null(Y) | dim(X)[2]!=length(object$beta.est)[1]-1 ){
+                if (is.null(X) | is.null(Y) ){
                         stop("You need to supply the original X and Y with type = 'class' ")
                 }
                 beta <- beta.lda(object$beta.est,object$copyX,object$copyY)

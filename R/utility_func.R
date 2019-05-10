@@ -1,4 +1,4 @@
-#' @importFrom stats optim var coef
+#' @importFrom stats optim var coef cov
 update_alpha.lasso <- function(X, Y, Z, alpha.old, sigma.square, theta, maxstep_inner,
     tolerance_inner) {
     ## initial
