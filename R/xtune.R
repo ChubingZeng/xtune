@@ -82,7 +82,10 @@ xtune <- function(X, Y, Z = NULL,family=c("linear","binary"), sigma.square = NUL
                         stop("Y is not 0/1 binary variable")
                 }
                 family = "binary"
-        } else if (sort(unique(Y)) == c(0,1)){
+        } else if (length(unique(Y)) == 2){
+                if (sum(unique(Y))!=1){
+                        stop("Y only has two unique values, but they are not 0/1")
+                }
                 family = "binary"
         }
 
