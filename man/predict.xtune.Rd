@@ -39,10 +39,10 @@ Y <- example$Y
 Z <- example$Z
 
 ## If no Z provided, perform Empirical Bayes tuning
-fit.eb <- xtune(X,Y)
+# fit.eb <- xtune(X,Y)
 ## Coef and predict methods
-coef(fit.eb)
-predict(fit.eb,X)
+#coef(fit.eb)
+# predict(fit.eb,X)
 
 ## Differential shrinkage based on external information Z:
 fit.diff <- xtune(X,Y,Z)
