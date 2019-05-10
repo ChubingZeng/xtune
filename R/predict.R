@@ -52,7 +52,7 @@ predict.xtune <- function(object, newX, type = c("response","class"), X= NULL,Y=
                 if (is.null(X) | is.null(Y) ){
                         stop("You need to supply the original X and Y with type = 'class' ")
                 }
-                beta <- beta.lda(object$beta.est,object$copyX,object$copyY)
+                beta <- beta.lda(object$beta.est,X,Y)
                 pred <- beta[1] + newX %*% beta[-1]
                 predicted <- ifelse(pred>0,1,0)
         } else {
