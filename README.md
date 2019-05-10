@@ -97,7 +97,7 @@ xtune.fit$penalty.vectors
 The `coef` and `predict` functions can be used to extract beta coefficient estimates and predict response on new data. 
 
 ``` r
-coef(xtune)
+coef(xtune.fit)
 predict(xtune.fit, example$X)
 ```
 
