@@ -129,7 +129,7 @@ xtune <- function(X, Y, Z = NULL,family=c("linear","binary"), sigma.square = NUL
                 }
         }
 
-        if (!identical(dat_ext[, 1], rep(1, nvar))) {
+        if (!identical(dat_ext[, 1], rep(1, nvar)) & ncolZ != nvar) {
                 ## if no column of one is appended then append a column of 1s
                 dat_ext = cbind(1, dat_ext)
         }

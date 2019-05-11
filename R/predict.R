@@ -38,7 +38,9 @@ predict.xtune <- function(object, newX, type = c("response","class"), X= NULL,Y=
         ## check new X input
         if (missing(newX)){
             stop("You need to supply a value for 'newX'")
-            } else if (!is.matrix(newX)) {
+            } else if (!(typeof(newX) %in% c("double", "integer"))) {
+                    stop("New X contains non-numeric values")
+                    } else if (!is.matrix(newX)) {
                             stop("New X is not a matrix")
                             } else if (length(object$beta.est[-1]) != ncol(newX)) {
                                     stop("New X does not have the same number of columns as X train")
