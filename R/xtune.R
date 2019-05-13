@@ -129,7 +129,7 @@ xtune <- function(X, Y, Z = NULL,family=c("linear","binary"), sigma.square = NUL
                 }
         }
 
-        if (!identical(dat_ext[, 1], rep(1, nvar)) & ncolZ != nvar) {
+        if (!identical(dat_ext[, 1], rep(1, nvar)) & ncol(dat_ext) != nvar) {
                 ## if no column of one is appended then append a column of 1s
                 dat_ext = cbind(1, dat_ext)
         }
@@ -186,12 +186,12 @@ xtune <- function(X, Y, Z = NULL,family=c("linear","binary"), sigma.square = NUL
 #' alpha values are the hyper-parameters for the double exponential prior of regression coefficients,
 #'  and it controls the prior variance of regression coefficients. Default is a vector of 0 with length p.
 #' @param maxstep Maximum number of iterations. Default is 100.
-#' @param tolerance Convergence threshhold. Default is 1e-4.
+#' @param tolerance Convergence threshold. Default is 1e-4.
 #' @param maxstep_inner Maximum number of iterations for the inner loop of the majorization-minimization algorithm.
-#' @param tolerance_inner Convergence threshhold for the inner loop of the majorization-minimization algorithm.
-#' @param compute.likelihood Should the function compute the marginal likelihood for hyper-parameters at each step of update? Default is TRUE.
+#' @param tolerance_inner Convergence threshold for the inner loop of the majorization-minimization algorithm.
+#' @param compute.likelihood Should the function compute the marginal likelihood for hyper-parameters at each step of the update? Default is TRUE.
 #' @param verbosity Track algorithm update process? Default is FALSE.
-#' @param standardize Standardize X or not, same as the standardize option in glmnet
+#' @param standardize Standardize X or not, same as the standardized option in glmnet
 #' @param intercept Should intercept(s) be fitted (default=TRUE) or set to zero (FALSE), same as the intercept option in glmnet
 #' @export
 

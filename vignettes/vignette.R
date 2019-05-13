@@ -41,3 +41,14 @@ data(gene)
 gene$GeneExpression[1:3,1:5]
 gene$PreviousStudy[1:5,]
 
+## ----sp1-----------------------------------------------------------------
+fit.eb <- xtune(X,Y)
+
+## ----sp2-----------------------------------------------------------------
+
+Z_iden = diag(ncol(diet$DietItems))
+fit.diet.identity = xtune(diet$DietItems,diet$weightloss,Z_iden)
+
+## ----sp22----------------------------------------------------------------
+fit.diet.identity$penalty.vector
+

@@ -15,17 +15,17 @@ alpha values are the hyper-parameters for the double exponential prior of regres
 
 \item{maxstep}{Maximum number of iterations. Default is 100.}
 
-\item{tolerance}{Convergence threshhold. Default is 1e-4.}
+\item{tolerance}{Convergence threshold. Default is 1e-4.}
 
 \item{maxstep_inner}{Maximum number of iterations for the inner loop of the majorization-minimization algorithm.}
 
-\item{tolerance_inner}{Convergence threshhold for the inner loop of the majorization-minimization algorithm.}
+\item{tolerance_inner}{Convergence threshold for the inner loop of the majorization-minimization algorithm.}
 
-\item{compute.likelihood}{Should the function compute the marginal likelihood for hyper-parameters at each step of update? Default is TRUE.}
+\item{compute.likelihood}{Should the function compute the marginal likelihood for hyper-parameters at each step of the update? Default is TRUE.}
 
 \item{verbosity}{Track algorithm update process? Default is FALSE.}
 
-\item{standardize}{Standardize X or not, same as the standardize option in glmnet}
+\item{standardize}{Standardize X or not, same as the standardized option in glmnet}
 
 \item{intercept}{Should intercept(s) be fitted (default=TRUE) or set to zero (FALSE), same as the intercept option in glmnet}
 }
