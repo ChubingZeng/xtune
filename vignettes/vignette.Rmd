@@ -1,5 +1,5 @@
 ---
-title: "`xtune`: Tuning differential shrinkage parameters of penalized regression models based on external information"
+title: "Getting started with `xtune`"
 author: "Chubing Zeng"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -16,32 +16,138 @@ knitr::opts_chunk$set(
 )
 ```
 ###  Overview
-The main goal of `xtune` is to tuning multiple shrinkage parameters in Lasso and Ridge regression, based on external information. Standard Lasso or Ridge regression only have a single penalty parameter $\lambda$ applied equally to all regression coefficients to control the amount of regularization in the model. 
+The main usage of `xtune` is to tune multiple shrinkage parameters in Lasso and Ridge regression, based on external information. 
 
-Here we apply an individual shrinkage parameter $\lambda_j$ to each regression coefficient $\beta_j$. And the 
-vector of shrinkage parameters $\lambda s = (\lambda_1,...,\lambda_p)$ is modeled as a function of the external information $Z$ provided to the model. A better prediction accuracy for penalized regression models may be achieved by allowing individual shrinkage for each regression coefficients based on external in-formation. 
+The classical penalized regression uses a single penalty parameter $\lambda$ that applys equally to all regression coefficients to control the amount of regularization in the model. And the single penalty parameter tuning is typically performed using cross-validation. 
 
-We employ an Empirical Bayes approach to learn the multiple tuning parameters. Once the tuning parameters $\lambda$s are estimated, and therefore the penalties known, the regression coefficients are obtained using glmnet.
+Here we apply an individual shrinkage parameter $\lambda_j$ to each regression coefficient $\beta_j$. And the vector of shrinkage parameters $\lambda s = (\lambda_1,...,\lambda_p)$ is guided by external information $Z$. In specific, $\lambda$s is modeled as a log liner function of $Z$. A better prediction accuracy for penalized regression models may be achieved by allowing individual shrinkage for each regression coefficients based on external information. 
 
-The response variable can be quantitative a factor with two levels. For binary response variable, a sparse LDA procedure is used to get the fisher discriminant direction and the discriminant function for a new data point.
+To tune the differential shrinkage parameter vector $\lambda s = (\lambda_1,...,\lambda_p)$, we employ an Empirical Bayes approach by specifying LASSO and Ridge to their random-effect formulation. Once the tuning parameters $\lambda$s are estimated, and therefore the penalties known, the regression coefficients are obtained using the `glmnet` package.
 
+The response variable can be either quantitative or a factor with two levels. For binary response variable, a sparse LDA procedure is used to get the fisher discriminant direction and the discriminant function for a new data point.
+
+The sparse LDA procedure is described in this paper: 
+
+Mai, Qing & Zou, Hui & Yuan, Ming. (2012). A direct approach to sparse discriminant analysis in ultra-high dimensions. Biometrika. 99. 10.2307/41720670. 
 
 Utilities for carrying out post-fitting summarization and prediction are also provided.
 
-This file uses three simulated examples to illustrate the usage and syntax of `xtune`. Please note that all datasets are simulated. 
+### Examples 
+This file uses three simulated examples to illustrate the usage and syntax of `xtune`. The first example gives users a general sense of the data structure and model fitting process. The second and third examples uses simulated data in concrete scenarios to illustrate the usage of the package. In the second example `diet`, we provide simulated data to mimic the dietary example described in this paper: 
 
-### Examples 1 
-The purpose of this example is to give users a general sense of the data structure  
+S. Witte, John & Greenland, Sander & W. Haile, Robert & L. Bird, Cristy. (1994). Hierarchical Regression Analysis Applied to a Study of Multiple Dietary Exposures and Breast Cancer. Epidemiology (Cambridge, Mass.). 5. 612-21. 10.1097/00001648-199411000-00009. 
 
-
-
-
+And in the third example `gene`, we provide simulated data to mimic the bone density data published in the European Bioinformatics Institute (EMBL-EBI) ArrayExpress repository, ID: E-MEXP-1618. 
 
 
+#### General Example
+In the first example, $Y$ is a $n = 100$-dimensional continuous observed outcome vector, $X$ is matrix of $p$ potential predictors observed on the $n$ observations, and $Z$ is a set of $q = 4$ external features available for the $p = 300$ predictors. 
 
+```{r ex1}
+library(xtune)
+data("example")
+X <- example$X; Y <- example$Y; Z <- example$Z
+dim(X);dim(Z)
+```
+Each column of Z contains information about the predictors in design matrix X. The number of rows in Z equals to the number of predictors in X. 
+```{r dim}
+X[1:3,1:10]
+```
+The external information is encoded as follows:
+```{r}
+Z[1:10,]
+```
+Here, each variable in Z is an binary variable. $Z_{jk}$ indicates if $Predictor_j$ has $ExternalVariable_k$ or not. This Z is an example of (non-overlapping) grouping of predictors. Predictor 1 and 2 belongs to group 1; predictor 3 and 4 belongs to group 2; predictor 5 and 6 belongs to group 3, and the rest of the predictors belongs to group 4. 
 
+To fit a differential-shrinakge lasso model to this data:
+```{r fit1}
+fit.example1 <- xtune(X,Y,Z)
+```
 
+The individual penalty parameters are returned by 
 
+```
+fit.example1$penalty.vector
+```
 
+In this example, predictors in each group get different estimated penalty parameters. 
 
+```{r ex1uni}
+unique(fit.example1$penalty.vector)
+```
 
+Coefficient estimates and predicted values and can be obtained via `predict` and `coef`:
+
+```
+coef(fit.example1)
+predict(fit.example1, newX = X)
+```
+
+The `mse` function can be used to get the mean square error (MSE) between prediction values and true values. 
+```
+mse(predict(fit.example1, newX = X), Y)
+```
+
+#### Dietary example
+Suppose we want to predict a person's weight loss (binary outcome) using his/her weekly dietary intake. Our external information Z could incorporates information about the levels of relevant food constituents in the dietary items.
+
+```{r ex2_data}
+data(diet)
+head(diet$DietItems)
+head(diet$weightloss)
+```
+
+The external information Z in this example is: 
+```{r ex2ex}
+head(diet$NuitritionFact)
+```
+
+In this example, Z is not grouping of the predictors. The idea is that the nutrition facts about the dietary items might give us some information on the importance of each predictor in model. 
+
+Similar to the previous example, the xtune model could be fit by: 
+```{r exfit}
+fit.diet = xtune(X = diet$DietItems,Y=diet$weightloss,Z = diet$NuitritionFact, family="binary")
+```
+
+Each dietary predictor is estimated an individual tuning parameter based on their nuitrition fact. 
+
+```{r indiv}
+fit.diet$penalty.vector
+```
+
+To make prediction using the trained model
+```
+predict(fit.diet,newX = diet$DietItems)
+```
+
+The above code returns the predicted probabilities (scores). To make class prediction, use the `type = "class"` option and also provide the original X and Y used for fit.
+
+```
+pred_class <- predict(fit.diet,newX = diet$DietItems,type = "class",X = diet$DietItems,Y=diet$weightloss)
+```
+
+The `misclassifiction()` function can be used to extract the misclassification rate. The prediction AUC can be calculated using the auc() function from AUC package. 
+
+```
+misclassification(pred_class,true = diet$weightloss)
+```
+
+#### Gene expression data example
+The `gene` data contains a simulated gene expression data.
+The dimension of data is $100\times 300$. The outcome Y is continuous (bone mineral density). The external information is four previous study results that identifies the biological importance of genes. For example $Z_{jk}$ means whether $gene_j$ is identified to be biologically important in previous study $k$ result. $Z_{jk} = 1$ means that gene $j$ is identified by previous study $k$ result and $Z_{jk} = 0$ means that gene $j$ is not identified to be important by previous study $k$ result. 
+
+```{r ex3_data}
+data(gene)
+gene$GeneExpression[1:3,1:5]
+gene$PreviousStudy[1:5,]
+```
+
+A gene can be identified to be important by several previous study results, therefore the external information Z in this example can be seen as overlapping 
+group of variables. 
+
+Model fitting:
+```
+fit.gene = xtune(X = gene$GeneExpression,Y=gene$bonedensity,Z = gene$PreviousStudy)
+```
+
+The rest of the steps are the same as the previous two examples. 

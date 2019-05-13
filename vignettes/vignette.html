@@ -12,12 +12,50 @@
 
 <meta name="author" content="Chubing Zeng" />
 
-<meta name="date" content="2019-05-07" />
+<meta name="date" content="2019-05-11" />
 
-<title>xtune: Tuning differential shrinkage parameters of penalized regression models based on external information</title>
+<title>Getting started with xtune</title>
 
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
 
 
 
@@ -30,24 +68,175 @@
 
 
 
-<h1 class="title toc-ignore"><code>xtune</code>: Tuning differential shrinkage parameters of penalized regression models based on external information</h1>
+<h1 class="title toc-ignore">Getting started with <code>xtune</code></h1>
 <h4 class="author"><em>Chubing Zeng</em></h4>
-<h4 class="date"><em>2019-05-07</em></h4>
+<h4 class="date"><em>2019-05-11</em></h4>
 
 
 
 <div id="overview" class="section level3">
 <h3>Overview</h3>
-<p>The main goal of <code>xtune</code> is to tuning multiple shrinkage parameters in Lasso and Ridge regression, based on external information. Standard Lasso or Ridge regression only have a single penalty parameter <span class="math inline">\(\lambda\)</span> applied equally to all regression coefficients to control the amount of regularization in the model.</p>
-<p>Here we apply an individual shrinkage parameter <span class="math inline">\(\lambda_j\)</span> to each regression coefficient <span class="math inline">\(\beta_j\)</span>. And the vector of shrinkage parameters <span class="math inline">\(\lambda s = (\lambda_1,...,\lambda_p)\)</span> is modeled as a function of the external information <span class="math inline">\(Z\)</span> provided to the model. A better prediction accuracy for penalized regression models may be achieved by allowing individual shrinkage for each regression coefficients based on external in-formation.</p>
-<p>We employ an Empirical Bayes approach to learn the multiple tuning parameters. Once the tuning parameters <span class="math inline">\(\lambda\)</span>s are estimated, and therefore the penalties known, the regression coefficients are obtained using glmnet.</p>
-<p>The response variable can be quantitative a factor with two levels. For binary response variable, a sparse LDA procedure is used to get the fisher discriminant direction and the discriminant function for a new data point.</p>
+<p>The main usage of <code>xtune</code> is to tune multiple shrinkage parameters in Lasso and Ridge regression, based on external information.</p>
+<p>The classical penalized regression uses a single penalty parameter <span class="math inline">\(\lambda\)</span> that applys equally to all regression coefficients to control the amount of regularization in the model. And the single penalty parameter tuning is typically performed using cross-validation.</p>
+<p>Here we apply an individual shrinkage parameter <span class="math inline">\(\lambda_j\)</span> to each regression coefficient <span class="math inline">\(\beta_j\)</span>. And the vector of shrinkage parameters <span class="math inline">\(\lambda s = (\lambda_1,...,\lambda_p)\)</span> is guided by external information <span class="math inline">\(Z\)</span>. In specific, <span class="math inline">\(\lambda\)</span>s is modeled as a log liner function of <span class="math inline">\(Z\)</span>. A better prediction accuracy for penalized regression models may be achieved by allowing individual shrinkage for each regression coefficients based on external information.</p>
+<p>To tune the differential shrinkage parameter vector <span class="math inline">\(\lambda s = (\lambda_1,...,\lambda_p)\)</span>, we employ an Empirical Bayes approach by specifying LASSO and Ridge to their random-effect formulation. Once the tuning parameters <span class="math inline">\(\lambda\)</span>s are estimated, and therefore the penalties known, the regression coefficients are obtained using the <code>glmnet</code> package.</p>
+<p>The response variable can be either quantitative or a factor with two levels. For binary response variable, a sparse LDA procedure is used to get the fisher discriminant direction and the discriminant function for a new data point.</p>
+<p>The sparse LDA procedure is described in this paper:</p>
+<p>Mai, Qing &amp; Zou, Hui &amp; Yuan, Ming. (2012). A direct approach to sparse discriminant analysis in ultra-high dimensions. Biometrika. 99. 10.2307/41720670.</p>
 <p>Utilities for carrying out post-fitting summarization and prediction are also provided.</p>
-<p>This file uses three simulated examples to illustrate the usage and syntax of <code>xtune</code>. Please note that all datasets are simulated.</p>
 </div>
-<div id="examples-1" class="section level3">
-<h3>Examples 1</h3>
-<p>The purpose of this example is to give users a general sense of the data structure</p>
+<div id="examples" class="section level3">
+<h3>Examples</h3>
+<p>This file uses three simulated examples to illustrate the usage and syntax of <code>xtune</code>. The first example gives users a general sense of the data structure and model fitting process. The second and third examples uses simulated data in concrete scenarios to illustrate the usage of the package. In the second example <code>diet</code>, we provide simulated data to mimic the dietary example described in this paper:</p>
+<p>S. Witte, John &amp; Greenland, Sander &amp; W. Haile, Robert &amp; L. Bird, Cristy. (1994). Hierarchical Regression Analysis Applied to a Study of Multiple Dietary Exposures and Breast Cancer. Epidemiology (Cambridge, Mass.). 5. 612-21. 10.1097/00001648-199411000-00009.</p>
+<p>And in the third example <code>gene</code>, we provide simulated data to mimic the bone density data published in the European Bioinformatics Institute (EMBL-EBI) ArrayExpress repository, ID: E-MEXP-1618.</p>
+<div id="general-example" class="section level4">
+<h4>General Example</h4>
+<p>In the first example, <span class="math inline">\(Y\)</span> is a <span class="math inline">\(n = 100\)</span>-dimensional continuous observed outcome vector, <span class="math inline">\(X\)</span> is matrix of <span class="math inline">\(p\)</span> potential predictors observed on the <span class="math inline">\(n\)</span> observations, and <span class="math inline">\(Z\)</span> is a set of <span class="math inline">\(q = 4\)</span> external features available for the <span class="math inline">\(p = 300\)</span> predictors.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(xtune)
+<span class="kw">data</span>(<span class="st">&quot;example&quot;</span>)
+X &lt;-<span class="st"> </span>example<span class="op">$</span>X; Y &lt;-<span class="st"> </span>example<span class="op">$</span>Y; Z &lt;-<span class="st"> </span>example<span class="op">$</span>Z
+<span class="kw">dim</span>(X);<span class="kw">dim</span>(Z)
+<span class="co">#&gt; [1] 100 300</span>
+<span class="co">#&gt; [1] 300   4</span></code></pre></div>
+<p>Each column of Z contains information about the predictors in design matrix X. The number of rows in Z equals to the number of predictors in X.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]
+<span class="co">#&gt;               Predictor_1 Predictor_2 Predictor_3 Predictor_4 Predictor_5</span>
+<span class="co">#&gt; Observation_1  -0.7667960   0.9212806   2.0149030  0.79004563  -1.4244699</span>
+<span class="co">#&gt; Observation_2  -0.8164583  -0.3144157  -0.2253684  0.08712746  -1.0296026</span>
+<span class="co">#&gt; Observation_3  -0.1415352   0.6623149  -1.0398456  1.87611212   0.7340254</span>
+<span class="co">#&gt;               Predictor_6 Predictor_7 Predictor_8 Predictor_9 Predictor_10</span>
+<span class="co">#&gt; Observation_1  -0.9529327  -0.9344928 -0.32964818   0.4486023  -0.70894600</span>
+<span class="co">#&gt; Observation_2   2.2546851   0.2732793 -0.03852896   1.3830463   0.03070716</span>
+<span class="co">#&gt; Observation_3   1.7534320   0.3263808  0.09564893  -2.2104531   0.22615224</span></code></pre></div>
+<p>The external information is encoded as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Z[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]
+<span class="co">#&gt;              External_variable_1 External_variable_2 External_variable_3</span>
+<span class="co">#&gt; Predictor_1                    1                   0                   0</span>
+<span class="co">#&gt; Predictor_2                    1                   0                   0</span>
+<span class="co">#&gt; Predictor_3                    0                   1                   0</span>
+<span class="co">#&gt; Predictor_4                    0                   1                   0</span>
+<span class="co">#&gt; Predictor_5                    0                   0                   1</span>
+<span class="co">#&gt; Predictor_6                    0                   0                   1</span>
+<span class="co">#&gt; Predictor_7                    0                   0                   0</span>
+<span class="co">#&gt; Predictor_8                    0                   0                   0</span>
+<span class="co">#&gt; Predictor_9                    0                   0                   0</span>
+<span class="co">#&gt; Predictor_10                   0                   0                   0</span>
+<span class="co">#&gt;              External_variable_4</span>
+<span class="co">#&gt; Predictor_1                    0</span>
+<span class="co">#&gt; Predictor_2                    0</span>
+<span class="co">#&gt; Predictor_3                    0</span>
+<span class="co">#&gt; Predictor_4                    0</span>
+<span class="co">#&gt; Predictor_5                    0</span>
+<span class="co">#&gt; Predictor_6                    0</span>
+<span class="co">#&gt; Predictor_7                    1</span>
+<span class="co">#&gt; Predictor_8                    1</span>
+<span class="co">#&gt; Predictor_9                    1</span>
+<span class="co">#&gt; Predictor_10                   1</span></code></pre></div>
+<p>Here, each variable in Z is an binary variable. <span class="math inline">\(Z_{jk}\)</span> indicates if <span class="math inline">\(Predictor_j\)</span> has <span class="math inline">\(ExternalVariable_k\)</span> or not. This Z is an example of (non-overlapping) grouping of predictors. Predictor 1 and 2 belongs to group 1; predictor 3 and 4 belongs to group 2; predictor 5 and 6 belongs to group 3, and the rest of the predictors belongs to group 4.</p>
+<p>To fit a differential-shrinakge lasso model to this data:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.example1 &lt;-<span class="st"> </span><span class="kw">xtune</span>(X,Y,Z)
+<span class="co">#&gt; Z provided, start estimating individual tuning parameters</span></code></pre></div>
+<p>The individual penalty parameters are returned by</p>
+<pre><code>fit.example1$penalty.vector</code></pre>
+<p>In this example, predictors in each group get different estimated penalty parameters.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(fit.example1<span class="op">$</span>penalty.vector)
+<span class="co">#&gt;                    [,1]</span>
+<span class="co">#&gt; Predictor_1 0.008279325</span>
+<span class="co">#&gt; Predictor_3 0.015136550</span>
+<span class="co">#&gt; Predictor_5 0.035192457</span>
+<span class="co">#&gt; Predictor_7 1.649864801</span></code></pre></div>
+<p>Coefficient estimates and predicted values and can be obtained via <code>predict</code> and <code>coef</code>:</p>
+<pre><code>coef(fit.example1)
+predict(fit.example1, newX = X)</code></pre>
+<p>The <code>mse</code> function can be used to get the mean square error (MSE) between prediction values and true values.</p>
+<pre><code>mse(predict(fit.example1, newX = X), Y)</code></pre>
+</div>
+<div id="dietary-example" class="section level4">
+<h4>Dietary example</h4>
+<p>Suppose we want to predict a person’s weight loss (binary outcome) using his/her weekly dietary intake. Our external information Z could incorporates information about the levels of relevant food constituents in the dietary items.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(diet)
+<span class="kw">head</span>(diet<span class="op">$</span>DietItems)
+<span class="co">#&gt;      Milk Margarine Eggs Apples Lettuce Celery Hot dogs Liver Dark bread</span>
+<span class="co">#&gt; [1,]    2         2    6      2       4      2        2     0          1</span>
+<span class="co">#&gt; [2,]    2         0    0      0       3      6        0     0          4</span>
+<span class="co">#&gt; [3,]    0         1    3      5       2      5        0     0          6</span>
+<span class="co">#&gt; [4,]    0         3    0      1       1      1        1     0          4</span>
+<span class="co">#&gt; [5,]    1         1    2      5       2      2        1     3          3</span>
+<span class="co">#&gt; [6,]    3         2    4      2       4      1        2     3          3</span>
+<span class="co">#&gt;      Pasta Beer Liquor Cookies Bran</span>
+<span class="co">#&gt; [1,]     2    0      3       5    6</span>
+<span class="co">#&gt; [2,]     0    3      1       1    5</span>
+<span class="co">#&gt; [3,]     0    1      3       2    1</span>
+<span class="co">#&gt; [4,]     1    2      2       1    4</span>
+<span class="co">#&gt; [5,]     3    1      0       0    4</span>
+<span class="co">#&gt; [6,]     2    2      0       3    2</span>
+<span class="kw">head</span>(diet<span class="op">$</span>weightloss)
+<span class="co">#&gt; [1] 0 1 1 1 1 1</span></code></pre></div>
+<p>The external information Z in this example is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(diet<span class="op">$</span>NuitritionFact)
+<span class="co">#&gt;            Calories   Protein Carbohydrates</span>
+<span class="co">#&gt; Milk      0.8293411 0.9765283     3.1774423</span>
+<span class="co">#&gt; Margarine 0.5591902 0.8340626     0.2589148</span>
+<span class="co">#&gt; Eggs      0.9751737 0.1534241     0.4487985</span>
+<span class="co">#&gt; Apples    3.3310695 1.3267249     1.3918929</span>
+<span class="co">#&gt; Lettuce   1.3401675 0.7208144     0.3664577</span>
+<span class="co">#&gt; Celery    0.3751379 1.8032856     0.6161983</span></code></pre></div>
+<p>In this example, Z is not grouping of the predictors. The idea is that the nutrition facts about the dietary items might give us some information on the importance of each predictor in model.</p>
+<p>Similar to the previous example, the xtune model could be fit by:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.diet =<span class="st"> </span><span class="kw">xtune</span>(<span class="dt">X =</span> diet<span class="op">$</span>DietItems,<span class="dt">Y=</span>diet<span class="op">$</span>weightloss,<span class="dt">Z =</span> diet<span class="op">$</span>NuitritionFact, <span class="dt">family=</span><span class="st">&quot;binary&quot;</span>)
+<span class="co">#&gt; Z provided, start estimating individual tuning parameters</span></code></pre></div>
+<p>Each dietary predictor is estimated an individual tuning parameter based on their nuitrition fact.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.diet<span class="op">$</span>penalty.vector
+<span class="co">#&gt;                  [,1]</span>
+<span class="co">#&gt; Milk       0.10310716</span>
+<span class="co">#&gt; Margarine  0.02974374</span>
+<span class="co">#&gt; Eggs       0.04040445</span>
+<span class="co">#&gt; Apples     0.01409930</span>
+<span class="co">#&gt; Lettuce    0.02492226</span>
+<span class="co">#&gt; Celery     0.02242299</span>
+<span class="co">#&gt; Hot dogs   0.04196006</span>
+<span class="co">#&gt; Liver      0.04994045</span>
+<span class="co">#&gt; Dark bread 0.01201271</span>
+<span class="co">#&gt; Pasta      0.04271165</span>
+<span class="co">#&gt; Beer       0.01909349</span>
+<span class="co">#&gt; Liquor     0.03869287</span>
+<span class="co">#&gt; Cookies    0.04930646</span>
+<span class="co">#&gt; Bran       0.05790866</span></code></pre></div>
+<p>To make prediction using the trained model</p>
+<pre><code>predict(fit.diet,newX = diet$DietItems)</code></pre>
+<p>The above code returns the predicted probabilities (scores). To make class prediction, use the <code>type = &quot;class&quot;</code> option and also provide the original X and Y used for fit.</p>
+<pre><code>pred_class &lt;- predict(fit.diet,newX = diet$DietItems,type = &quot;class&quot;,X = diet$DietItems,Y=diet$weightloss)</code></pre>
+<p>The <code>misclassifiction()</code> function can be used to extract the misclassification rate. The prediction AUC can be calculated using the auc() function from AUC package.</p>
+<pre><code>misclassification(pred_class,true = diet$weightloss)</code></pre>
+</div>
+<div id="gene-expression-data-example" class="section level4">
+<h4>Gene expression data example</h4>
+<p>The <code>gene</code> data contains a simulated gene expression data. The dimension of data is <span class="math inline">\(100\times 300\)</span>. The outcome Y is continuous (bone mineral density). The external information is four previous study results that identifies the biological importance of genes. For example <span class="math inline">\(Z_{jk}\)</span> means whether <span class="math inline">\(gene_j\)</span> is identified to be biologically important in previous study <span class="math inline">\(k\)</span> result. <span class="math inline">\(Z_{jk} = 1\)</span> means that gene <span class="math inline">\(j\)</span> is identified by previous study <span class="math inline">\(k\)</span> result and <span class="math inline">\(Z_{jk} = 0\)</span> means that gene <span class="math inline">\(j\)</span> is not identified to be important by previous study <span class="math inline">\(k\)</span> result.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(gene)
+gene<span class="op">$</span>GeneExpression[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]
+<span class="co">#&gt;          Gene_1     Gene_2     Gene_3     Gene_4     Gene_5</span>
+<span class="co">#&gt; [1,] -0.7667960  0.9212806  2.0149030 0.79004563 -1.4244699</span>
+<span class="co">#&gt; [2,] -0.8164583 -0.3144157 -0.2253684 0.08712746 -1.0296026</span>
+<span class="co">#&gt; [3,] -0.1415352  0.6623149 -1.0398456 1.87611212  0.7340254</span>
+gene<span class="op">$</span>PreviousStudy[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,]
+<span class="co">#&gt;        Identified by previous study 1 Identified by previous study 2</span>
+<span class="co">#&gt; Gene_1                              0                              0</span>
+<span class="co">#&gt; Gene_2                              0                              0</span>
+<span class="co">#&gt; Gene_3                              0                              0</span>
+<span class="co">#&gt; Gene_4                              0                              0</span>
+<span class="co">#&gt; Gene_5                              0                              0</span>
+<span class="co">#&gt;        Identified by previous study 3 Identified by previous study 4</span>
+<span class="co">#&gt; Gene_1                              0                              0</span>
+<span class="co">#&gt; Gene_2                              0                              0</span>
+<span class="co">#&gt; Gene_3                              0                              0</span>
+<span class="co">#&gt; Gene_4                              0                              0</span>
+<span class="co">#&gt; Gene_5                              0                              0</span></code></pre></div>
+<p>A gene can be identified to be important by several previous study results, therefore the external information Z in this example can be seen as overlapping group of variables.</p>
+<p>Model fitting:</p>
+<pre><code>fit.gene = xtune(X = gene$GeneExpression,Y=gene$bonedensity,Z = gene$PreviousStudy)</code></pre>
+<p>The rest of the steps are the same as the previous two examples.</p>
+</div>
 </div>
 
 
