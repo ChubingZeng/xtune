@@ -4,7 +4,7 @@
 \alias{estimateVariance}
 \title{Estimate noise variance given predictor X and response Y.}
 \usage{
-estimateVariance(X, Y, n_rep = 10)
+estimateVariance(X, Y, n_rep = 5)
 }
 \arguments{
 \item{X}{predictor matrix of dimension \eqn{n} by \eqn{p}.}

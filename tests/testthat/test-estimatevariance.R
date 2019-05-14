@@ -2,7 +2,7 @@ context("test estimate variance")
 set.seed(1234)
 
 test_that("estimateVariance works as intended", {
-  X <- matrix(runif(500), ncol = 50)
+  X <- matrix(runif(30), ncol = 3)
   Y <- runif(10)
 
   res <- estimateVariance(X, Y)
@@ -13,7 +13,7 @@ test_that("estimateVariance works as intended", {
 })
 
 test_that("estimateVariance errors when input is wrong sizes", {
-        X <- matrix(runif(900), nrow = 90)
-        Y <- runif(100)
+        X <- matrix(runif(30), nrow = 10)
+        Y <- runif(5)
         expect_error(estimateVariance(X, Y))
 })

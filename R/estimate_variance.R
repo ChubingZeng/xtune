@@ -23,7 +23,7 @@
 #' @importFrom selectiveInference estimateSigma
 #' @export
 
-estimateVariance <- function(X, Y, n_rep = 10) {
+estimateVariance <- function(X, Y, n_rep = 5) {
         Y <- as.double(drop(Y))
         dimY = dim(Y)
         nrowY = ifelse(is.null(dimY), length(Y), dimY[1])

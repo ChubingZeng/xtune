@@ -79,7 +79,7 @@ xtune <- function(X, Y, Z = NULL,family=c("linear","binary"), sigma.square = NUL
                 stop("Y must be a quantitive vector or a 0/1 binary factor variable")
         } else if (is.factor(Y)){
                 if(sum(!(levels(Y) %in% c("0","1")))!=0){
-                        stop("Y is not 0/1 binary variable")
+                        stop("Y is binary variable, please use 0/1 encoding")
                 }
                 family = "binary"
         } else if (length(unique(Y)) == 2){
