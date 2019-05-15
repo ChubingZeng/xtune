@@ -70,7 +70,7 @@ Z[1:10,]
 ```
 Here, each variable in Z is a binary variable. $Z_{jk}$ indicates if $Predictor_j$ has $ExternalVariable_k$ or not. This Z is an example of (non-overlapping) grouping of predictors. Predictor 1 and 2 belongs to group 1; predictor 3 and 4 belongs to group 2; predictor 5 and 6 belongs to group 3, and the rest of the predictors belongs to group 4. 
 
-To fit a differential-shrinakge lasso model to this data:
+To fit a differential-shrinkage lasso model to this data:
 ```{r fit1}
 fit.example1 <- xtune(X,Y,Z)
 ```

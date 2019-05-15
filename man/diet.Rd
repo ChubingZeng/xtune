@@ -8,21 +8,21 @@
 \itemize{
 \item DietItems: Matrix of predictors.
 \item weightloss: 0: no weight loss; 1: weight loss
-\item NuitritionFact: External information of the predictors
+\item nutritionFact: External information of the predictors
 }}
 \usage{
 data(diet)
 }
 \description{
 The simulated \code{diet} data contains 100 observations, 14 predictors,
-and an binary outcome, weightloss. The external information Z is the nuitrition fact about the dietary items.
+and an binary outcome, weightloss. The external information Z is the nutrition fact about the dietary items.
 Z contains three external information variables: Calories, protein and carbohydrates.
 }
 \examples{
 data(diet)
 X <- diet$DietItems
 Y <- diet$weightloss
-Z <- diet$NuitritionFact
+Z <- diet$nutritionFact
 \donttest{fit <- xtune(X,Y,Z)}
 \donttest{fit$penalty.vector}
 }

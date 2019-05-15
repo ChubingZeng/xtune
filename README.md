@@ -79,7 +79,7 @@ example$Z[1:5,]
 
 If you do not provide external information `Z`, the function will perform empirical Bayes tuning to choose the single penalty parameter in penalized regression, as an alternative to cross-validation. You could compare the tuning parameter chosen by empirical Bayes tuning to that choose by cross-validation (see also `cv.glmnet`). The default penalty applied to the predictors is the Lasso penalty. 
 
-If you provide an identify matrix as external information Z to `xtune()`, the function will estimate a seperate tuning parameter ![equation](https://latex.codecogs.com/gif.latex?\lambda_j) for each regression coefficient ![equation](https://latex.codecogs.com/gif.latex?\beta_j).
+If you provide an identify matrix as external information Z to `xtune()`, the function will estimate a separate tuning parameter ![equation](https://latex.codecogs.com/gif.latex?\lambda_j) for each regression coefficient ![equation](https://latex.codecogs.com/gif.latex?\beta_j).
 
 ``` r
 xtune.fit <- xtune(example$X,example$Y,example$Z)

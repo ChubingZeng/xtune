@@ -1,6 +1,6 @@
 #' Tuning differential shrinkage parameters in penalized regression based on external information.
 #'
-#' \code{xtune} uses an Empirical Bayes approach to integrate external information into penalized linear regression models. It fits models with differential amount of shrinkages for each regression coefficient based on external information.
+#' \code{xtune} uses an Empirical Bayes approach to integrate external information into penalized linear regression models. It fits models with differential amount of shrinkage for each regression coefficient based on external information.
 #' @param X Numeric design matrix of explanatory variables (\eqn{n} observations in rows, \eqn{p} predictors in columns), without an intercept. \code{xtune} includes an intercept by default.
 #' @param Y Outcome vector of dimension \eqn{n}. Quantitative for family="linear", or family="binary" for a 0/1 binary outcome variable.
 #' @param Z Numeric information matrix about the predictors (\eqn{p} rows, each corresponding to a predictor in X; \eqn{q} columns of external information about the predictors, such as prior biological importance). If Z is the grouping of predictors, it is best if user codes it as a dummy variable (i.e. each column indicating whether predictors belong to a specific group)

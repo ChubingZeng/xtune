@@ -36,7 +36,7 @@ An object with S3 class \code{xtune} containing:
 \item{likelihood}{A vector containing the marginal likelihood value of the fitted model at each iteration.}
 }
 \description{
-\code{xtune} uses an Empirical Bayes approach to integrate external information into penalized linear regression models. It fits models with differential amount of shrinkages for each regression coefficient based on external information.
+\code{xtune} uses an Empirical Bayes approach to integrate external information into penalized linear regression models. It fits models with differential amount of shrinkage for each regression coefficient based on external information.
 }
 \details{
 \code{xtune} has two main usages:

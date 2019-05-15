@@ -4,7 +4,7 @@ Title: Regularized Regression with Differential Penalties Integrating External I
 Version: 0.1.0
 Author: Chubing Zeng
 Maintainer: Chubing Zeng <chubingz@usc.edu>
-Description: This package extends standard penalized regression (Lasso and Ridge) to allow differential shrinkage based on external information with the goal of achieving a better prediction accuracy. Examples of external information include the grouping of predictors, prior knowledge of biological importance, external p-values, function annotations, etc. The choice of multiple tuning parameters is done using an Empirical Bayes approach. A majorization-minimization algorithm is employed for implementation. 
+Description: Extends standard penalized regression (Lasso and Ridge) to allow differential shrinkage based on external information with the goal of achieving a better prediction accuracy. Examples of external information include the grouping of predictors, prior knowledge of biological importance, external p-values, function annotations, etc. The choice of multiple tuning parameters is done using an Empirical Bayes approach. A majorization-minimization algorithm is employed for implementation. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -16,8 +16,8 @@ Depends:
    R (>= 2.10)
 RoxygenNote: 6.0.1
 Suggests: 
-    rmutil,
     knitr,
+    numDeriv,
     lbfgs,
     rmarkdown,
     testthat,
